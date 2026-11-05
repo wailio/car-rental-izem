@@ -81,22 +81,22 @@ export default function ContactPage() {
           <div
             className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
             style={{
-              transform: `translate3d(0, ${Math.min(scrollY * 0.24, 90)}px, 0)`,
+              transform: `translate3d(0, ${Math.min(scrollY * 0.22, 80)}px, 0)`,
               willChange: "transform",
             }}
           >
             <div
-              className="absolute inset-x-0 w-full h-[145%] -top-[20%] bg-cover bg-no-repeat"
+              className="absolute inset-x-0 w-full h-[150%] -top-[25%] bg-cover bg-no-repeat"
               style={{
                 backgroundImage: "url('/images/bbg.jpg')",
-                backgroundPosition: "center 48%",
+                backgroundPosition: "center 30%",
               }}
             />
           </div>
 
           {/* Cinematic Scrims: Anchored to card frame for rock-solid contrast */}
-          <div className="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#0A0D12]/75 via-black/25 to-[#0A0D12]/80" />
-          <div className="absolute inset-0 pointer-events-none z-[1] bg-radial-at-c from-transparent via-transparent to-[#0A0D12]/40" />
+          <div className="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#0A0D12]/60 via-black/20 to-[#0A0D12]/75" />
+          <div className="absolute inset-0 pointer-events-none z-[1] bg-radial-at-c from-transparent via-transparent to-[#0A0D12]/30" />
 
           {/* ── Embedded Navigation Header (Transparent, Blending In) ────────── */}
           <header className="relative z-20 flex items-center justify-between px-6 sm:px-10 lg:px-12 py-3.5 sm:py-4 border-b border-white/10">
