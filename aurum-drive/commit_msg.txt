@@ -1,0 +1,45 @@
+feat(home): Phase 3 -- page d'accueil rebâtie section par section
+
+H1 HeroSection -- cadre inséré (margin 16px, r-xl), fond nuit, voiture golf-7
+découpée qui déborde à droite, heure en direct Alger, barre de réservation glass,
+tirets de piste, animation GSAP S1 (label → titre → sous-titre → CTAs → voiture
+→ barre), parallaxe pointeur fine.
+
+H2 TrustStrip -- 5 promesses vérifiées (icône + texte), séparateurs verticaux
+qui se dessinent au scroll. Remplace StatsStrip (faux chiffres, orange).
+
+H3 CategoriesSection -- migration complète vers tokens (--gold, --night-*, --line,
+--font-display). Aucun #FF3600 restant.
+
+H4 ServicesEditorialSection -- liste éditoriale 4 rangées, numérotation
+--font-display --gold, trait qui vire or au survol, flèche translateX(6px).
+
+H5 FeaturedFleetSection -- migration tokens. Onglets actifs --gold, cartes
+--night-850, prix --font-display --gold, btn-key remplace btn-gold-sheen.
+
+H6 WhyChooseUsSection -- collage asymétrique (photo principale + superposée),
+badge aéroport, 4 cartes fonctionnalités interactives, description s'ouvre
+à l'activation. Tokens complets.
+
+H7 VideoSection -- retourne null (HAS_VIDEO=false) per spec : pas de lecteur
+vide. TODO:CLIENT à confirmer.
+
+H8 HowItWorksSection -- 4 étapes en grille responsive, chiffres --gold, cartes
+--night-850, data-reveal pop avec stagger.
+
+H9 ReviewsSection -- une grande citation (--font-display), indicateurs dots
+animés, flèches nav, swap opacity 200ms. <3 avis → null + invite WhatsApp.
+
+H10 FAQSection -- gauche sticky (label, H2, lien), droite accordéon smooth
+(grid-template-rows), JSON-LD FAQPage, ChevronDown rotate, couleur or à l'ouverture.
+
+H11 FinalCTASection -- tire-tread-pattern, rayon gold, tirets piste, btn-key +
+WhatsApp. Tokens complets.
+
+Header -- migration complète tokens. Barre info slide sur scroll (height 0).
+Skip link visible au focus. aria-current sur liens actifs. btn-key pour CTA.
+Menu mobile role=dialog aria-modal. Horizon hairline gold.
+
+page.tsx -- TrustStrip câblée, StatsStrip retiré, section order préservé.
+
+Gates: tsc 0 erreur · qa:content 0 violation · impeccable 0 anti-pattern
