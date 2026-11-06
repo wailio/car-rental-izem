@@ -77,7 +77,7 @@ export default function ContactPage() {
       {/* ── Framed Hero Banner (Exact 75% Compact Height & Solid Placement Effect) ── */}
       <section className="relative w-full px-3.5 sm:px-4 lg:px-[15px] pt-3 sm:pt-[15px]">
         <div className="relative w-full rounded-[20px] sm:rounded-[28px] overflow-hidden bg-[#0A0D12] h-[310px] sm:h-[340px] lg:h-[365px] flex flex-col justify-between shadow-2xl border border-white/10">
-          {/* Background Image: Smooth Parallax Solid Placement Scroll Effect */}
+          {/* Background Image: Solid placement scroll effect */}
           <div
             className="absolute inset-0 pointer-events-none z-0 overflow-hidden"
             style={{
@@ -86,17 +86,16 @@ export default function ContactPage() {
             }}
           >
             <div
-              className="absolute inset-x-0 w-full h-[145%] -top-[20%] bg-cover bg-no-repeat"
+              className="absolute inset-0 w-full h-[160%] -top-[20%] bg-cover bg-no-repeat"
               style={{
-                backgroundImage: "url('/images/bbg.jpg')",
-                backgroundPosition: "center 48%",
+                backgroundImage: "url('/images/contact-bg.png')",
+                backgroundPosition: "center 30%",
               }}
             />
+            {/* Cinematic Scrims */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0A0D12]/75 via-black/35 to-[#0A0D12]/85" />
+            <div className="absolute inset-0 bg-radial-at-c from-transparent via-transparent to-[#0A0D12]/50" />
           </div>
-
-          {/* Cinematic Scrims: Anchored to card frame for rock-solid contrast */}
-          <div className="absolute inset-0 pointer-events-none z-[1] bg-gradient-to-b from-[#0A0D12]/75 via-black/25 to-[#0A0D12]/80" />
-          <div className="absolute inset-0 pointer-events-none z-[1] bg-radial-at-c from-transparent via-transparent to-[#0A0D12]/40" />
 
           {/* ── Embedded Navigation Header (Transparent, Blending In) ────────── */}
           <header className="relative z-20 flex items-center justify-between px-6 sm:px-10 lg:px-12 py-3.5 sm:py-4 border-b border-white/10">
