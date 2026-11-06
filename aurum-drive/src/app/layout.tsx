@@ -28,15 +28,12 @@ import { WhatsAppButton } from "@/components/common/WhatsAppButton";
 const newsreader = Newsreader({
   variable: "--font-newsreader",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 
 const hanken = Hanken_Grotesk({
   variable: "--font-hanken",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -44,15 +41,13 @@ const hanken = Hanken_Grotesk({
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
   subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
+  weight: "400",
   display: "swap",
 });
 
 const instrumentSans = Instrument_Sans({
   variable: "--font-instrument-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -60,7 +55,6 @@ const instrumentSans = Instrument_Sans({
 const sora = Sora({
   variable: "--font-sora",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
