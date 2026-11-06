@@ -21,3 +21,5 @@ Thumbs.db
 # AI agent scratch
 .agents/
 .agent/
+aurum-drive/AGENTS.md
+aurum-drive/CLAUDE.md
