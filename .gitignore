@@ -1,29 +1,23 @@
-# ── Node / Next.js ────────────────────────────────────────────
+# Node / Next.js
 aurum-drive/node_modules/
 aurum-drive/.next/
 aurum-drive/out/
 aurum-drive/build/
 aurum-drive/.vercel/
-aurum-drive/coverage/
-aurum-drive/*.tsbuildinfo
+aurum-drive/scratch/
 aurum-drive/next-env.d.ts
-
-# ── Temp Chrome screenshots (agent artefacts) ─────────────────
+aurum-drive/*.tsbuildinfo
 aurum-drive/.chrome-tmp*/
-aurum-drive/scripts/*.png
 
-# ── Environment / secrets ─────────────────────────────────────
+# Env / secrets
 aurum-drive/.env*
+*.env
 *.pem
 
-# ── OS ────────────────────────────────────────────────────────
+# OS
 .DS_Store
 Thumbs.db
 
-# ── Agent / AI tooling ────────────────────────────────────────
+# AI agent scratch
 .agents/
 .agent/
-skills/
-skills-lock.json
-docs/redesign/
-scratch/
