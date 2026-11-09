@@ -490,7 +490,7 @@ export default function AdminDashboard() {
           <div className="order-1 lg:col-start-1 flex flex-col gap-4">
 
             {/* ── PRIMARY METRICS CARD ───────────────────────────────────────── */}
-            <div className="admin-card" style={{ borderRadius: 18, padding: '20px 22px' }}>
+            <div data-pop="up" className="admin-card" style={{ borderRadius: 18, padding: '20px 22px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
                 <div>
                   <p style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
@@ -821,7 +821,7 @@ export default function AdminDashboard() {
 
           {/* ════ RIGHT COLUMN — VÉHICULES EN ATTENTE DE LIVRAISON ════════════ */}
           <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-3">
-            <div className="admin-card" style={{ borderRadius: 20, padding: '20px 22px', position: 'sticky', top: 72 }}>
+            <div data-pop="right" className="admin-card" style={{ borderRadius: 20, padding: '20px 22px', position: 'sticky', top: 72 }}>
 
               {/* Header: Label + Count with Thin + Bold signature */}
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>

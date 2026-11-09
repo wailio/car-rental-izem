@@ -627,7 +627,7 @@ export default function AdminOrdersPage() {
           <>
             {/* ── MOBILE LEADS GRID (2 per line) ── */}
             <div className="grid grid-cols-2 gap-2.5 md:hidden mb-4">
-              {filtered.map(order => {
+              {filtered.map((order, idx) => {
                 const st = STATUS_LABELS[order.status] || STATUS_LABELS.new
                 const dateInfo = getReservationDateRange(order)
                 const isAssigned = order.status === 'assigned' || order.status === 'funnel'
@@ -635,6 +635,8 @@ export default function AdminOrdersPage() {
                 return (
                   <div
                     key={order.id}
+                    data-pop="up"
+                    data-pop-stagger={String((idx % 6) + 1)}
                     onClick={() => setDetailModalOrder(order)}
                     style={{
                       background: '#FFFFFF',
@@ -794,7 +796,7 @@ export default function AdminOrdersPage() {
 
             {/* ── DESKTOP ORDERS LIST (Visible on md and larger) ── */}
             <div className="hidden md:flex flex-col gap-3.5">
-              {filtered.map(order => {
+              {filtered.map((order, idx) => {
                 const st = STATUS_LABELS[order.status] || STATUS_LABELS.new
                 const dateInfo = getReservationDateRange(order)
                 const isMenuOpen = activeMenu === order.id
@@ -803,6 +805,8 @@ export default function AdminOrdersPage() {
                 return (
                   <div
                     key={order.id}
+                    data-pop="up"
+                    data-pop-stagger={String((idx % 8) + 1)}
                     style={{
                       background: '#FFFFFF',
                       borderRadius: 16,

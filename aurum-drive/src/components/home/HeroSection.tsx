@@ -125,7 +125,10 @@ export function HeroSection() {
         {/* ── 2. Center Content Area (Eyebrow, H1, Subtitle, Two CTA Buttons) ── */}
         <div className="relative z-10 text-center px-4 sm:px-8 max-w-4xl mx-auto pt-1 sm:pt-2 pb-1 -translate-y-4 sm:-translate-y-6 lg:-translate-y-8">
           {/* Eyebrow Pill Badge (• Prise en charge à l'Aéroport d'Alger) */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 mb-2.5 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-md shadow-sm">
+          <div
+            data-pop="badge"
+            className="inline-flex items-center gap-2 px-3.5 py-1 mb-2.5 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-md shadow-sm"
+          >
             <span className="w-1.5 h-1.5 rounded-full bg-[#0B7584] animate-pulse shrink-0 shadow-[0_0_10px_rgba(11, 117, 132,0.85)]" />
             <span className="font-sora text-[11px] sm:text-xs font-medium text-white/90 tracking-normal">
               Prise en charge à l&apos;Aéroport d&apos;Alger
@@ -134,6 +137,7 @@ export function HeroSection() {
 
           {/* H1 Heading — iOS thin+bold weight contrast */}
           <h1
+            data-pop="up"
             style={{
               fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
               fontSize: 'clamp(1.9rem, 4.5vw, 3.2rem)',
@@ -151,6 +155,8 @@ export function HeroSection() {
 
           {/* Subtitle */}
           <div
+            data-pop="up"
+            data-pop-delay="0.1s"
             className="mb-4 sm:mb-5"
             style={{
               fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif",
@@ -182,7 +188,11 @@ export function HeroSection() {
           </div>
 
           {/* The Two Hero CTA Buttons (Same line & equal size on mobile) */}
-          <div className="flex items-center justify-center gap-2 sm:gap-3 w-full max-w-sm sm:max-w-none mx-auto">
+          <div
+            data-pop="up"
+            data-pop-delay="0.18s"
+            className="flex items-center justify-center gap-2 sm:gap-3 w-full max-w-sm sm:max-w-none mx-auto"
+          >
             {/* Button 1: Signature Electric Orange (Réserver un véhicule) */}
             <button
               onClick={scrollToBooking}
@@ -208,7 +218,7 @@ export function HeroSection() {
         </div>
 
         {/* ── 3. Bottom Floating Booking Bar ── */}
-        <div id="booking-box" className="relative z-20 w-full px-3.5 sm:px-6 lg:px-8 pb-10 sm:pb-12 lg:pb-14 pt-2">
+        <div id="booking-box" data-pop="scale" data-pop-delay="0.25s" className="relative z-20 w-full px-3.5 sm:px-6 lg:px-8 pb-10 sm:pb-12 lg:pb-14 pt-2">
           {/* Desktop Booking Bar (Untouched) */}
           <form
             onSubmit={handleSubmit}

@@ -651,8 +651,119 @@ body {
    ═══════════════════════════════════════════════════════════════════ */
 
 [data-reveal] {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RENTGO & NOVARIDE POP-OUT SCROLL REVEAL ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Default Pop-out (Scale + Vertical Rise) */
+.pop-init {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0) scale(0.94);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.pop-in {
   opacity: 1 !important;
-  transform: none !important;
+  transform: translate3d(0, 0, 0) scale(1) !important;
+}
+
+/* Pop-out variants */
+[data-pop="scale"].pop-init {
+  transform: scale(0.90);
+}
+[data-pop="left"].pop-init {
+  transform: translate3d(-32px, 0, 0) scale(0.95);
+}
+[data-pop="right"].pop-init {
+  transform: translate3d(32px, 0, 0) scale(0.95);
+}
+[data-pop="badge"].pop-init {
+  transform: scale(0.85);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Stagger cascades for child items (cars, pills, steps, grid elements) */
+[data-pop-stagger] > *:nth-child(1),
+.pop-stagger > *:nth-child(1) { transition-delay: 0.05s; }
+[data-pop-stagger] > *:nth-child(2),
+.pop-stagger > *:nth-child(2) { transition-delay: 0.12s; }
+[data-pop-stagger] > *:nth-child(3),
+.pop-stagger > *:nth-child(3) { transition-delay: 0.19s; }
+[data-pop-stagger] > *:nth-child(4),
+.pop-stagger > *:nth-child(4) { transition-delay: 0.26s; }
+[data-pop-stagger] > *:nth-child(5),
+.pop-stagger > *:nth-child(5) { transition-delay: 0.33s; }
+[data-pop-stagger] > *:nth-child(6),
+.pop-stagger > *:nth-child(6) { transition-delay: 0.40s; }
+[data-pop-stagger] > *:nth-child(7),
+.pop-stagger > *:nth-child(7) { transition-delay: 0.47s; }
+[data-pop-stagger] > *:nth-child(8),
+.pop-stagger > *:nth-child(8) { transition-delay: 0.54s; }
+
+/* ── Admin Page Pop-in & Donut Orbit Telemetry ── */
+@keyframes adminPagePop {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 10px, 0) scale(0.982);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.admin-page-pop {
+  animation: adminPagePop 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes donutOrbitGlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.donut-orbit-ray {
+  animation: donutOrbitGlow 7s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes cometPulse {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+
+.donut-comet-pulse {
+  animation: cometPulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  transform-origin: center;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .pop-init,
+  [data-pop].pop-init,
+  .admin-page-pop,
+  .donut-orbit-ray,
+  .donut-comet-pulse {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 /* Smooth Scrollbar */

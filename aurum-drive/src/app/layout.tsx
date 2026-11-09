@@ -13,6 +13,7 @@ import { HomeAwareHeader } from "@/components/navigation/HomeAwareHeader";
 import { Footer } from "@/components/navigation/Footer";
 import { SkipLink } from "@/components/common/SkipLink";
 import { WhatsAppButton } from "@/components/common/WhatsAppButton";
+import { ScrollPopObserver } from "@/components/motion/ScrollPopObserver";
 
 /**
  * TYPE DUEL — Phase 2.2
@@ -204,6 +205,7 @@ export default function RootLayout({
           <div className="flex-1 w-full">{children}</div>
           <Footer />
           <WhatsAppButton />
+          <ScrollPopObserver />
         </SmoothScroll>
       </body>
     </html>

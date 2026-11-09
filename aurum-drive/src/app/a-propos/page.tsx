@@ -11,8 +11,9 @@ export default function AboutPage() {
   return (
     <div id="main" className="min-h-screen py-6 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-20">
       {/* Header */}
-      <div className="max-w-3xl space-y-3 sm:space-y-4">
+      <div data-pop="up" className="max-w-3xl space-y-3 sm:space-y-4">
         <div
+          data-pop="badge"
           className="inline-flex items-center px-3 py-1 rounded-full text-[10.5px] uppercase tracking-[0.2em] font-semibold"
           style={{
             border: '1px solid rgba(194,165,107,.3)',
@@ -37,6 +38,7 @@ export default function AboutPage() {
       {/* Story Grid with Image */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-12 items-center">
         <div
+          data-pop="left"
           className="lg:col-span-6 relative h-[240px] sm:h-[500px] rounded-2xl sm:rounded-3xl overflow-hidden"
           style={{
             border: '1px solid rgba(255,255,255,.07)',
@@ -57,7 +59,7 @@ export default function AboutPage() {
           />
         </div>
 
-        <div className="lg:col-span-6 space-y-6">
+        <div data-pop="right" className="lg:col-span-6 space-y-6">
           <h2
             className="text-2xl sm:text-3xl font-bold"
             style={{ fontFamily: 'var(--font-display)', color: 'var(--ivory)' }}
@@ -91,6 +93,7 @@ export default function AboutPage() {
 
       {/* Stats Section */}
       <div
+        data-pop="scale"
         className="rounded-3xl p-8 sm:p-12"
         style={{
           background: 'var(--night-850)',
@@ -99,7 +102,7 @@ export default function AboutPage() {
       >
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center sm:text-left">
           {stats.map((s, idx) => (
-            <div key={idx} className="space-y-1">
+            <div key={idx} data-pop="up" data-pop-stagger={String(idx + 1)} className="space-y-1">
               <div
                 className="text-3xl sm:text-4xl font-bold tabular-nums"
                 style={{ fontFamily: 'var(--font-display)', color: 'var(--gold)' }}
@@ -113,7 +116,7 @@ export default function AboutPage() {
       </div>
 
       {/* Contact Call to Action */}
-      <div className="text-center space-y-4 py-8">
+      <div data-pop="up" className="text-center space-y-4 py-8">
         <h2
           className="text-2xl sm:text-3xl font-bold"
           style={{ fontFamily: 'var(--font-display)', color: 'var(--ivory)' }}

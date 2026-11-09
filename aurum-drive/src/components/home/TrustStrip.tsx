@@ -58,6 +58,7 @@ function Pill({ icon: Icon, text }: { icon: typeof Plane; text: string }) {
 export function TrustStrip() {
   return (
     <section
+      data-pop="up"
       aria-label="Nos engagements"
       style={{
         marginTop: 20,

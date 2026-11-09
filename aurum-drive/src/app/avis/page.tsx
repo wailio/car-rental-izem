@@ -54,7 +54,7 @@ export default function ReviewsPage() {
     >
       <div className="max-w-6xl mx-auto">
         {/* ── Header ──────────────────────────────────────────────────── */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200/80 mb-8">
+        <div data-pop="up" className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200/80 mb-8">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200/80 mb-3">
               <Star size={13} className="fill-amber-500 text-amber-500" />
@@ -150,7 +150,7 @@ export default function ReviewsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-            {visibleReviews.map((rev) => {
+            {visibleReviews.map((rev, i) => {
               const isLong = rev.text.length > TRUNCATE_LIMIT;
               const displayText = isLong
                 ? rev.text.slice(0, TRUNCATE_LIMIT).trim() + "....."
@@ -167,6 +167,8 @@ export default function ReviewsPage() {
               return (
                 <div
                   key={rev.id}
+                  data-pop="up"
+                  data-pop-stagger={String((i % 6) + 1)}
                   onClick={() => openReviewModal(rev.id)}
                   role="button"
                   tabIndex={0}

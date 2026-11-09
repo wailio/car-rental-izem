@@ -77,8 +77,9 @@ export function CategoriesSection() {
           marginBottom: 36,
         }}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <div data-pop="left" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <div
+            data-pop="badge"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -123,7 +124,7 @@ export function CategoriesSection() {
         </div>
 
         {/* Carousel Nav */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div data-pop="right" style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <NavButton onClick={scrollLeft} label="Catégorie précédente" rotate>
             <ChevronRight size={18} />
           </NavButton>
@@ -234,6 +235,8 @@ function CategoryCard({
       }}
       data-reveal="fade-up"
       data-reveal-delay={String(index * 60)}
+      data-pop="up"
+      data-pop-stagger={String((index % 6) + 1)}
       onMouseEnter={() => setCardHovered(true)}
       onMouseLeave={() => {
         setCardHovered(false);

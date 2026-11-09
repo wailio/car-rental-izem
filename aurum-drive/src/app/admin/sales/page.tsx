@@ -910,7 +910,7 @@ export default function LiveRentalsPage() {
         </div>
 
         {/* ── Big Horizontal Car Lines ─────────────────────────────────────── */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4" data-pop-stagger>
           {filteredCars.map((car) => {
             const isRented = car.status === 'rented' && car.rental
 
@@ -930,6 +930,7 @@ export default function LiveRentalsPage() {
             return (
               <div
                 key={car.id}
+                data-pop="up"
                 role="button"
                 tabIndex={0}
                 onClick={() => openDrawer(car.id)}
@@ -1061,8 +1062,16 @@ export default function LiveRentalsPage() {
                       style={{
                         transform: 'rotate(-90deg)',
                         filter: `drop-shadow(0 2px 8px ${ringColor}35)`,
+                        overflow: 'visible',
                       }}
                     >
+                      <defs>
+                        <linearGradient id={`donutGrad-${car.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor={ringColor} stopOpacity="0.85" />
+                          <stop offset="100%" stopColor={ringColor} stopOpacity="1" />
+                        </linearGradient>
+                      </defs>
+
                       {/* Background track circle */}
                       <circle
                         cx={center}
@@ -1073,21 +1082,53 @@ export default function LiveRentalsPage() {
                         strokeWidth={strokeWidth}
                       />
 
+                      {/* Continuous Orbiting Telemetry Ray */}
+                      {isRented && (
+                        <g className="donut-orbit-ray" style={{ transformOrigin: `${center}px ${center}px` }}>
+                          <circle
+                            cx={center + radius}
+                            cy={center}
+                            r={3}
+                            fill={ringColor}
+                            style={{
+                              filter: `drop-shadow(0 0 5px ${ringColor})`,
+                              opacity: 0.8,
+                            }}
+                          />
+                        </g>
+                      )}
+
                       {/* Dynamic passing time progress arc */}
                       <circle
                         cx={center}
                         cy={center}
                         r={radius}
                         fill="transparent"
-                        stroke={ringColor}
+                        stroke={`url(#donutGrad-${car.id})`}
                         strokeWidth={strokeWidth}
                         strokeDasharray={circumference}
                         strokeDashoffset={strokeDashoffset}
                         strokeLinecap="round"
                         style={{
-                          transition: 'stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease',
+                          transition: 'stroke-dashoffset 0.9s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease',
                         }}
                       />
+
+                      {/* Glowing Comet Head Particle at current progress angle */}
+                      {isRented && percentRemaining > 0 && percentRemaining < 100 && (
+                        <circle
+                          cx={center + radius * Math.cos(((percentRemaining / 100) * 2 * Math.PI))}
+                          cy={center + radius * Math.sin(((percentRemaining / 100) * 2 * Math.PI))}
+                          r={3.8}
+                          fill="#ffffff"
+                          stroke={ringColor}
+                          strokeWidth={2}
+                          className="donut-comet-pulse"
+                          style={{
+                            filter: `drop-shadow(0 0 6px ${ringColor})`,
+                          }}
+                        />
+                      )}
                     </svg>
 
                     {/* Donut Center Display */}

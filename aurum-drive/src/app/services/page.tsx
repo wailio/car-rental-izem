@@ -65,8 +65,9 @@ export default function ServicesPage() {
   return (
     <div id="main" className="min-h-screen py-6 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-16">
       {/* Page Header */}
-      <div className="space-y-3 sm:space-y-4 max-w-2xl">
+      <div data-pop="up" className="space-y-3 sm:space-y-4 max-w-2xl">
         <div
+          data-pop="badge"
           className="inline-flex items-center px-3 py-1 rounded-full text-[10.5px] uppercase tracking-[0.2em] font-semibold"
           style={{
             border: '1px solid rgba(194,165,107,.3)',
@@ -95,6 +96,8 @@ export default function ServicesPage() {
             key={index}
             data-reveal="fade-up"
             data-reveal-delay={String(index * 100)}
+            data-pop="up"
+            data-pop-stagger={String((index % 4) + 1)}
             className={`grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-center p-4 sm:p-12 rounded-2xl sm:rounded-3xl ${
               index % 2 === 1 ? "lg:flex-row-reverse" : ""
             }`}

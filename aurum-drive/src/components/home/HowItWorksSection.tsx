@@ -179,6 +179,7 @@ export function HowItWorksSection() {
       >
         {/* Header */}
         <div
+          data-pop="up"
           style={{
             marginBottom: "clamp(28px, 4vw, 52px)",
             textAlign: "center",
@@ -188,6 +189,7 @@ export function HowItWorksSection() {
           }}
         >
           <div
+            data-pop="badge"
             style={{
               display: "inline-flex",
               alignItems: "center",

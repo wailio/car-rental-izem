@@ -52,8 +52,9 @@ export function FAQSection() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
         {/* Left Column (Sticky) */}
-        <div className="lg:col-span-5 lg:sticky lg:top-28 space-y-5">
+        <div data-pop="left" className="lg:col-span-5 lg:sticky lg:top-28 space-y-5">
           <div
+            data-pop="badge"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -142,6 +143,8 @@ export function FAQSection() {
                 key={i}
                 data-reveal="fade-up"
                 data-reveal-delay={String(i * 50)}
+                data-pop="up"
+                data-pop-stagger={String((i % 5) + 1)}
                 onMouseEnter={() => setActiveHoverIndex(i)}
                 onMouseLeave={() => {
                   setActiveHoverIndex(null);

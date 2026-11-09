@@ -94,8 +94,8 @@ export function ReviewsSection() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* ── Section Header ────────────────────────────────────── */}
-          <div className="text-center mb-8 sm:mb-10">
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200/80 mb-3">
+          <div data-pop="up" className="text-center mb-8 sm:mb-10">
+            <div data-pop="badge" className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200/80 mb-3">
               <Star size={13} className="fill-amber-500 text-amber-500" />
               <span>{badgeText}</span>
             </div>
@@ -117,7 +117,7 @@ export function ReviewsSection() {
             </p>
 
             {/* Google aggregate chip */}
-            <div className="mt-4 inline-flex flex-wrap items-center justify-center gap-3 bg-white border border-slate-200/90 rounded-full px-4 py-2 shadow-xs">
+            <div data-pop="scale" className="mt-4 inline-flex flex-wrap items-center justify-center gap-3 bg-white border border-slate-200/90 rounded-full px-4 py-2 shadow-xs">
               <div className="flex gap-1 text-amber-500">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} size={15} fill="currentColor" />
@@ -170,6 +170,7 @@ export function ReviewsSection() {
           {/* ── 3.5 Cards Sliding Carousel Container ──────────────── */}
           <div
             ref={containerRef}
+            data-pop="up"
             className="relative overflow-hidden mb-8 select-none"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}

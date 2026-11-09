@@ -479,7 +479,7 @@ export default function VehiclesFleetPage() {
             TOP STATS SECTION (Designed like dashboard stats WITHOUT icons)
             Clickable & reachable to filter every item directly
            ═══════════════════════════════════════════════════════════════════ */}
-        <div style={{
+        <div data-pop="up" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
           gap: 12,
@@ -645,13 +645,15 @@ export default function VehiclesFleetPage() {
 
             {/* Cars List (Lines) */}
             <div className="flex flex-col gap-2.5">
-              {filteredCars.map((car) => {
+              {filteredCars.map((car, i) => {
                 const isSelected = car.id === selectedId
                 const isRented = car.status === 'rented'
 
                 return (
                   <div
                     key={car.id}
+                    data-pop="up"
+                    data-pop-stagger={String((i % 8) + 1)}
                     onClick={() => setSelectedId(car.id)}
                     className="admin-row"
                     style={{
@@ -827,7 +829,7 @@ export default function VehiclesFleetPage() {
 
           {/* ════ RIGHT SIDE: GREAT SPACE (Car details, image first thing up, upcoming customers) ════ */}
           <div className="w-full lg:sticky lg:top-20">
-            <div className="admin-card" style={{
+            <div data-pop="right" className="admin-card" style={{
               borderRadius: 20,
               padding: '22px 24px',
               display: 'flex',

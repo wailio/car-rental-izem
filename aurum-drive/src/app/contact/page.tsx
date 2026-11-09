@@ -166,7 +166,7 @@ export default function ContactPage() {
           />
 
           {/* ── Center Content Area: Contactez-nous & Breadcrumb ─────────── */}
-          <div className="relative z-10 text-center px-4 max-w-3xl mx-auto my-auto py-4 space-y-2">
+          <div data-pop="up" className="relative z-10 text-center px-4 max-w-3xl mx-auto my-auto py-4 space-y-2">
             <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold text-white tracking-tight leading-tight drop-shadow-md">
               Contactez-nous
             </h1>
@@ -184,10 +184,10 @@ export default function ContactPage() {
                 }}
               >
                 <Link href="/" className="text-white hover:text-[#0B7584] transition-colors">
-                  Home
+                  Accueil
                 </Link>
                 <span className="mx-2 text-white/70">/</span>
-                <span className="text-white">Contact Us</span>
+                <span className="text-white">Contact</span>
               </div>
             </div>
           </div>
@@ -201,7 +201,7 @@ export default function ContactPage() {
       <section className="max-w-[1140px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Left Column: Client Image & Clean Contact Information */}
-          <div className="lg:col-span-5 space-y-6">
+          <div data-pop="left" className="lg:col-span-5 space-y-6">
             {/* Rentgo Client Image with rounded corners */}
             <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-sm bg-gray-100">
               <Image
@@ -299,7 +299,7 @@ export default function ContactPage() {
           </div>
 
           {/* Right Column: Rentgo Contact Form Card (Clean & Compact) */}
-          <div className="lg:col-span-7 bg-[#F7F8FA] border border-gray-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-9 shadow-xs">
+          <div data-pop="right" className="lg:col-span-7 bg-[#F7F8FA] border border-gray-200/80 rounded-2xl sm:rounded-3xl p-6 sm:p-9 shadow-xs">
             <div className="space-y-2 mb-6">
               <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-semibold bg-white border border-gray-200 text-gray-700 shadow-2xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#0B7584]" />

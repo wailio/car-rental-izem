@@ -33,8 +33,9 @@ export function FeaturedFleetSection() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
-          <div className="space-y-2">
+          <div data-pop="left" className="space-y-2">
             <div
+              data-pop="badge"
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs tracking-wide uppercase"
               style={{ background: 'rgba(11, 117, 132,0.08)', color: '#0B7584', fontWeight: 700 }}
             >
@@ -50,7 +51,7 @@ export function FeaturedFleetSection() {
           </div>
 
           {/* Category Filter Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+          <div data-pop="right" className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             {[{ id: "all", name: "Tous les modèles" }, ...categories.slice(0, 5)].map((c) => (
               <button
                 key={c.id}
@@ -83,6 +84,8 @@ export function FeaturedFleetSection() {
               key={vehicle.id}
               data-reveal="fade-up"
               data-reveal-delay={String(i * 60)}
+              data-pop="up"
+              data-pop-stagger={String((i % 6) + 1)}
               className="group flex flex-col justify-between"
               style={{
                 background: '#F4F5F8',

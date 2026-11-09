@@ -47,7 +47,7 @@ export function WhyChooseUsSection() {
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         {/* Left: Asymmetric Photo Collage */}
-        <div className="relative h-[420px] sm:h-[500px] lg:h-[540px] flex items-center">
+        <div data-pop="left" className="relative h-[420px] sm:h-[500px] lg:h-[540px] flex items-center">
           {/* Left Photo: hfla (Wedding / Cortège Event Car) */}
           <div className="absolute left-0 top-6 sm:top-8 w-[56%] sm:w-[58%] h-[78%] sm:h-[84%] rounded-2xl sm:rounded-3xl overflow-hidden border border-gray-200/90 shadow-xl bg-gray-100 z-0">
             <Image
@@ -72,7 +72,7 @@ export function WhyChooseUsSection() {
           </div>
 
           {/* Airport Delivery Floating Badge */}
-          <div className="absolute left-2 sm:left-4 bottom-1 sm:bottom-2 bg-white/95 backdrop-blur-md border border-gray-200/90 rounded-2xl p-3 sm:p-3.5 shadow-xl flex items-center gap-3 z-20">
+          <div data-pop="badge" className="absolute left-2 sm:left-4 bottom-1 sm:bottom-2 bg-white/95 backdrop-blur-md border border-gray-200/90 rounded-2xl p-3 sm:p-3.5 shadow-xl flex items-center gap-3 z-20">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#0B7584]/10 text-[#0B7584] flex items-center justify-center shrink-0">
               <Plane size={19} />
             </div>
@@ -88,7 +88,7 @@ export function WhyChooseUsSection() {
         </div>
 
         {/* Right: Content & Feature Cards */}
-        <div className="space-y-6">
+        <div data-pop="right" className="space-y-6">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-[#0B7584]/10 text-[#0B7584] mb-3">
               Pourquoi nous choisir
@@ -109,6 +109,8 @@ export function WhyChooseUsSection() {
               return (
                 <div
                   key={i}
+                  data-pop="up"
+                  data-pop-stagger={String(i + 1)}
                   onMouseEnter={() => setActiveFeature(i)}
                   className="relative group transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between"
                   style={{

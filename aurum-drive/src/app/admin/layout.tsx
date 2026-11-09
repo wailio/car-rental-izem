@@ -126,7 +126,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           scrollBehavior: 'smooth',
         }}
       >
-        <div className="pb-16 md:pb-8 min-h-full">
+        <div key={pathname} className="pb-16 md:pb-8 min-h-full admin-page-pop">
           {children}
         </div>
       </main>

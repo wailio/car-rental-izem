@@ -134,8 +134,9 @@ export function ServicesEditorialSection() {
         />
 
         {/* Header */}
-        <div style={{ marginBottom: "clamp(20px,3vw,40px)", position: "relative", zIndex: 2 }}>
+        <div data-pop="left" style={{ marginBottom: "clamp(20px,3vw,40px)", position: "relative", zIndex: 2 }}>
           <div
+            data-pop="badge"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -184,6 +185,8 @@ export function ServicesEditorialSection() {
                 key={svc.num}
                 data-reveal="fade-up"
                 data-reveal-delay={String(i * 70)}
+                data-pop="up"
+                data-pop-stagger={String(i + 1)}
                 onClick={() => setExpandedMobile(isExpanded ? null : i)}
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
