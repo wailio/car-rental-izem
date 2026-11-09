@@ -911,7 +911,7 @@ export default function LiveRentalsPage() {
 
         {/* ── Big Horizontal Car Lines ─────────────────────────────────────── */}
         <div className="flex flex-col gap-4" data-pop-stagger>
-          {filteredCars.map((car) => {
+          {filteredCars.map((car, idx) => {
             const isRented = car.status === 'rented' && car.rental
 
             // Calculate percentage of time remaining
@@ -923,14 +923,17 @@ export default function LiveRentalsPage() {
               ? getTimeRemainingColor(percentRemaining)
               : '#EF4444' // solid red for available/empty
 
-            const strokeDashoffset = isRented
+            // Arc draws FROM full circumference (empty, 12 o'clock) TO the target offset
+            // The CSS animation arcDrawIn handles the draw; we set CSS vars for the keyframe
+            const targetOffset = isRented
               ? circumference - (percentRemaining / 100) * circumference
-              : 0
+              : 0 // 0 = full ring for "available" (100% red ring)
+            const strokeDashoffset = targetOffset
 
             return (
               <div
                 key={car.id}
-                data-pop="up"
+                data-pop={idx % 2 === 0 ? 'left' : 'right'}
                 role="button"
                 tabIndex={0}
                 onClick={() => openDrawer(car.id)}
@@ -1082,23 +1085,7 @@ export default function LiveRentalsPage() {
                         strokeWidth={strokeWidth}
                       />
 
-                      {/* Continuous Orbiting Telemetry Ray */}
-                      {isRented && (
-                        <g className="donut-orbit-ray" style={{ transformOrigin: `${center}px ${center}px` }}>
-                          <circle
-                            cx={center + radius}
-                            cy={center}
-                            r={3}
-                            fill={ringColor}
-                            style={{
-                              filter: `drop-shadow(0 0 5px ${ringColor})`,
-                              opacity: 0.8,
-                            }}
-                          />
-                        </g>
-                      )}
-
-                      {/* Dynamic passing time progress arc */}
+                      {/* Arc draws clockwise from 12 o'clock (scratch) to current % */}
                       <circle
                         cx={center}
                         cy={center}
@@ -1107,27 +1094,44 @@ export default function LiveRentalsPage() {
                         stroke={`url(#donutGrad-${car.id})`}
                         strokeWidth={strokeWidth}
                         strokeDasharray={circumference}
-                        strokeDashoffset={strokeDashoffset}
                         strokeLinecap="round"
+                        className="donut-arc-draw"
                         style={{
-                          transition: 'stroke-dashoffset 0.9s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.4s ease',
-                        }}
+                          '--arc-circ': `${circumference}px`,
+                          '--arc-offset': `${strokeDashoffset}px`,
+                          animationDelay: `${Math.min(car.id * 0.12, 0.6)}s`,
+                        } as React.CSSProperties}
                       />
 
-                      {/* Glowing Comet Head Particle at current progress angle */}
-                      {isRented && percentRemaining > 0 && percentRemaining < 100 && (
-                        <circle
-                          cx={center + radius * Math.cos(((percentRemaining / 100) * 2 * Math.PI))}
-                          cy={center + radius * Math.sin(((percentRemaining / 100) * 2 * Math.PI))}
-                          r={3.8}
-                          fill="#ffffff"
-                          stroke={ringColor}
-                          strokeWidth={2}
-                          className="donut-comet-pulse"
+                      {/* Luxury Circular Dial Pip at arc tip (inspired by luxury gauge timers) */}
+                      {isRented && percentRemaining > 2 && percentRemaining < 100 && (
+                        <g
                           style={{
-                            filter: `drop-shadow(0 0 6px ${ringColor})`,
+                            animation: `knobFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${0.9 + Math.min(car.id * 0.12, 0.6)}s both`,
                           }}
-                        />
+                        >
+                          {/* Ambient soft glow aura */}
+                          <circle
+                            cx={center + radius * Math.cos(((percentRemaining / 100) * 2 * Math.PI))}
+                            cy={center + radius * Math.sin(((percentRemaining / 100) * 2 * Math.PI))}
+                            r={7.5}
+                            fill={ringColor}
+                            opacity={0.25}
+                            className="donut-comet-pulse"
+                          />
+                          {/* Dial Knob: White center + crisp colored boundary ring */}
+                          <circle
+                            cx={center + radius * Math.cos(((percentRemaining / 100) * 2 * Math.PI))}
+                            cy={center + radius * Math.sin(((percentRemaining / 100) * 2 * Math.PI))}
+                            r={4.5}
+                            fill="#FFFFFF"
+                            stroke={ringColor}
+                            strokeWidth={2.4}
+                            style={{
+                              filter: `drop-shadow(0 1px 4px ${ringColor}80)`,
+                            }}
+                          />
+                        </g>
                       )}
                     </svg>
 
@@ -1158,13 +1162,13 @@ export default function LiveRentalsPage() {
                           </span>
                           <span style={{
                             fontSize: 9,
-                            fontWeight: 700,
+                            fontWeight: 800,
                             color: ringColor,
                             textTransform: 'uppercase',
                             letterSpacing: '0.06em',
                             marginTop: 3,
                           }}>
-                            {percentRemaining}% rest.
+                            {percentRemaining}% REST.
                           </span>
                         </>
                       ) : (

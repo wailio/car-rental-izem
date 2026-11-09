@@ -490,7 +490,7 @@ export default function AdminDashboard() {
           <div className="order-1 lg:col-start-1 flex flex-col gap-4">
 
             {/* ── PRIMARY METRICS CARD ───────────────────────────────────────── */}
-            <div data-pop="up" className="admin-card" style={{ borderRadius: 18, padding: '20px 22px' }}>
+            <div data-pop="left" className="admin-card" style={{ borderRadius: 18, padding: '20px 22px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
                 <div>
                   <p style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>

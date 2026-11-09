@@ -652,7 +652,7 @@ export default function VehiclesFleetPage() {
                 return (
                   <div
                     key={car.id}
-                    data-pop="up"
+                    data-pop={i % 2 === 0 ? 'left' : 'right'}
                     data-pop-stagger={String((i % 8) + 1)}
                     onClick={() => setSelectedId(car.id)}
                     className="admin-row"

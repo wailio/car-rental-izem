@@ -635,7 +635,7 @@ export default function AdminOrdersPage() {
                 return (
                   <div
                     key={order.id}
-                    data-pop="up"
+                    data-pop={idx % 2 === 0 ? 'left' : 'right'}
                     data-pop-stagger={String((idx % 6) + 1)}
                     onClick={() => setDetailModalOrder(order)}
                     style={{
@@ -805,7 +805,7 @@ export default function AdminOrdersPage() {
                 return (
                   <div
                     key={order.id}
-                    data-pop="up"
+                    data-pop={idx % 2 === 0 ? 'left' : 'right'}
                     data-pop-stagger={String((idx % 8) + 1)}
                     style={{
                       background: '#FFFFFF',
