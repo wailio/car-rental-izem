@@ -1085,7 +1085,7 @@ export default function LiveRentalsPage() {
                         strokeWidth={strokeWidth}
                       />
 
-                      {/* Arc draws clockwise from 12 o'clock (scratch) to current % */}
+                      {/* Dynamic drawing arc starting from 12 o'clock */}
                       <circle
                         cx={center}
                         cy={center}
@@ -1102,37 +1102,6 @@ export default function LiveRentalsPage() {
                           animationDelay: `${Math.min(car.id * 0.12, 0.6)}s`,
                         } as React.CSSProperties}
                       />
-
-                      {/* Luxury Circular Dial Pip at arc tip (inspired by luxury gauge timers) */}
-                      {isRented && percentRemaining > 2 && percentRemaining < 100 && (
-                        <g
-                          style={{
-                            animation: `knobFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${0.9 + Math.min(car.id * 0.12, 0.6)}s both`,
-                          }}
-                        >
-                          {/* Ambient soft glow aura */}
-                          <circle
-                            cx={center + radius * Math.cos(((percentRemaining / 100) * 2 * Math.PI))}
-                            cy={center + radius * Math.sin(((percentRemaining / 100) * 2 * Math.PI))}
-                            r={7.5}
-                            fill={ringColor}
-                            opacity={0.25}
-                            className="donut-comet-pulse"
-                          />
-                          {/* Dial Knob: White center + crisp colored boundary ring */}
-                          <circle
-                            cx={center + radius * Math.cos(((percentRemaining / 100) * 2 * Math.PI))}
-                            cy={center + radius * Math.sin(((percentRemaining / 100) * 2 * Math.PI))}
-                            r={4.5}
-                            fill="#FFFFFF"
-                            stroke={ringColor}
-                            strokeWidth={2.4}
-                            style={{
-                              filter: `drop-shadow(0 1px 4px ${ringColor}80)`,
-                            }}
-                          />
-                        </g>
-                      )}
                     </svg>
 
                     {/* Donut Center Display */}
