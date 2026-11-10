@@ -5,14 +5,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { ROUTES, BRAND } from "@/lib/config";
 import { ArrowUpRight, Plane, CalendarCheck, ShieldCheck, Clock, Check } from "lucide-react";
+import { useSiteConfig } from "@/lib/use-site-config";
 
 export default function ServicesPage() {
+  const siteConfig = useSiteConfig();
   const serviceDetails = [
     {
-      title: "Livraison & retour à l'Aéroport d'Alger",
-      tagline: "Vos clés vous attendent à l'arrivée au terminal.",
-      image: "/cars/audi-a3-sportback.jpg",
+      title: siteConfig.service_1_title || "Livraison & retour à l'Aéroport d'Alger",
+      tagline: siteConfig.service_1_tagline || "Vos clés vous attendent à l'arrivée au terminal.",
+      image: siteConfig.service_1_image || "/cars/audi-a3-sportback.jpg",
       description:
+        siteConfig.service_1_desc ||
         "Finie l'attente après le vol. Dès votre sortie du terminal de l'Aéroport Houari Boumediene, notre équipe vous remet le véhicule réservé avec les papiers prêts. Au retour, nous récupérons la voiture au même endroit. Service gratuit 24h/24 et 7j/7.",
       perks: [
         "Accueil à la sortie du terminal",
@@ -22,10 +25,11 @@ export default function ServicesPage() {
       ],
     },
     {
-      title: "Location courte, moyenne et longue durée",
-      tagline: "Des formules souples avec tarifs dégressifs transparents.",
-      image: "/cars/volkswagen-t-cross.jpg",
+      title: siteConfig.service_2_title || "Location courte, moyenne et longue durée",
+      tagline: siteConfig.service_2_tagline || "Des formules souples avec tarifs dégressifs transparents.",
+      image: siteConfig.service_2_image || "/cars/volkswagen-t-cross.jpg",
       description:
+        siteConfig.service_2_desc ||
         "Que vous restiez quelques jours pour affaires ou plusieurs semaines en famille, profitez de tarifs dégressifs clairs. Pas de frais cachés, un kilométrage adapté et une transparence totale sur le dépôt de garantie.",
       perks: [
         "Tarifs dégressifs à partir de 7 jours",
@@ -35,10 +39,11 @@ export default function ServicesPage() {
       ],
     },
     {
-      title: "Assistance routière 24h/24 et 7j/7",
-      tagline: "Une équipe locale joignable à tout moment.",
-      image: "/cars/geely-coolray.jpg",
+      title: siteConfig.service_3_title || "Assistance routière 24h/24 et 7j/7",
+      tagline: siteConfig.service_3_tagline || "Une équipe locale joignable à tout moment.",
+      image: siteConfig.service_3_image || "/cars/geely-coolray.jpg",
       description:
+        siteConfig.service_3_desc ||
         "Parce qu'un imprévu peut arriver sur la route, notre assistance téléphonique et WhatsApp reste active 24h/24 et 7j/7. Nous coordonnons rapidement l'aide nécessaire pour que vous puissiez poursuivre votre trajet sereinement.",
       perks: [
         "Ligne d'assistance dédiée 7j/7",
@@ -48,10 +53,11 @@ export default function ServicesPage() {
       ],
     },
     {
-      title: "Véhicules pour événements et déplacements familiaux",
-      tagline: "Des voitures impeccables pour vos moments importants.",
-      image: "/cars/mg-7.png",
+      title: siteConfig.service_4_title || "Véhicules pour événements et déplacements familiaux",
+      tagline: siteConfig.service_4_tagline || "Des voitures impeccables pour vos moments importants.",
+      image: siteConfig.service_4_image || "/cars/mg-7.png",
       description:
+        siteConfig.service_4_desc ||
         "Nos SUV et berlines récents sont minutieusement nettoyés et contrôlés pour vos fêtes de famille, cortèges ou rendez-vous importants. Contactez-nous pour réserver les modèles de votre choix.",
       perks: [
         "Véhicules nettoyés intérieur et extérieur",

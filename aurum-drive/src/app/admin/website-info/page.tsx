@@ -9,7 +9,7 @@ import {
   Home, Phone, Info, Share2, LayoutTemplate, Search,
   ChevronRight, Save, Upload, Image as ImageIcon,
   Loader2, RefreshCw, ExternalLink, X, Check, Sparkles,
-  Car, Star, HelpCircle, FileText, Trash2, Plus, ChevronDown,
+  Car, Star, HelpCircle, FileText, Trash2, Plus, ChevronDown, Camera,
 } from 'lucide-react'
 import { DEFAULT_SITE_CONFIG, ReviewItem, parseReviews } from '@/lib/site-config'
 
@@ -62,6 +62,10 @@ const SITE_PAGES: SitePage[] = [
           { key: 'whatsapp', label: 'Numéro WhatsApp officiel', type: 'text', placeholder: '213555333316', hint: 'Sans le signe + ni espaces (ex: 213555333316)' },
           { key: 'email', label: 'Courriel officiel', type: 'text', placeholder: 'dzrentcars@gmail.com', hint: 'Pour les devis et confirmations écrites' },
         ],
+        imageFields: [
+          { key: 'contact_bg_image', label: 'Arrière-plan bannière contact', hint: 'Image principale affichée dans la bannière supérieure (/images/bbg.jpg)' },
+          { key: 'contact_client_image', label: 'Photo service client', hint: 'Visuel du service client affiché à côté des coordonnées (/images/contact-us-image.jpg)' },
+        ],
       },
       {
         key: 'localisation',
@@ -73,7 +77,7 @@ const SITE_PAGES: SitePage[] = [
           { key: 'maps_embed_url', label: 'Lien Google Maps / Itinéraire', type: 'url', placeholder: 'https://maps.google.com/?q=Aeroport+d+Alger+Houari+Boumediene', hint: 'Lien de géolocalisation pour guider le voyageur' },
         ],
         imageFields: [
-          { key: 'contact_bg_image', label: 'Arrière-plan bannière contact', hint: 'Image affichée dans la bannière supérieure (/images/contact-bg.png)' },
+          { key: 'contact_bg_image', label: 'Arrière-plan bannière contact', hint: 'Image principale affichée dans la bannière supérieure (/images/bbg.jpg)' },
           { key: 'contact_client_image', label: 'Photo service client', hint: 'Visuel du service client affiché à côté des coordonnées (/images/contact-us-image.jpg)' },
         ],
       },
@@ -297,6 +301,214 @@ const SITE_PAGES: SitePage[] = [
   },
 ]
 
+// ─── Image Field Box Component ───────────────────────────────────────────────
+
+function ImageFieldBox({
+  imgField,
+  value,
+  isUploading,
+  onPickDevice,
+  onDropFile,
+  onClear,
+  onChangeUrl,
+}: {
+  imgField: ImageField
+  value: string
+  isUploading: boolean
+  onPickDevice: () => void
+  onDropFile: (file: File) => void
+  onClear: () => void
+  onChangeUrl: (url: string) => void
+}) {
+  const [imgError, setImgError] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const [showUrlInput, setShowUrlInput] = useState(false)
+
+  // Reset error state when value changes
+  useEffect(() => {
+    setImgError(false)
+  }, [value])
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file && file.type.startsWith('image/')) {
+      onDropFile(file)
+    }
+  }
+
+  const hasImage = Boolean(value && value.trim() && !imgError)
+
+  return (
+    <div
+      className={`rounded-[22px] p-5 transition-all duration-200 border ${
+        isDragging
+          ? 'border-[#0F172A] bg-slate-50 ring-2 ring-slate-900/10'
+          : 'border-[#DFE3E8] bg-[#FFFFFF]'
+      }`}
+      style={{
+        boxShadow:
+          '0 1px 2px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.05)',
+      }}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      <div className="flex items-center justify-between mb-2.5">
+        <p
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            color: '#0F172A',
+            letterSpacing: '0.04em',
+            textTransform: 'uppercase',
+          }}
+        >
+          {imgField.label}
+        </p>
+        {value && !imgError && (
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            En ligne
+          </span>
+        )}
+      </div>
+
+      {/* Main Preview Box — Click to replace from device */}
+      <div
+        onClick={onPickDevice}
+        className="relative rounded-2xl overflow-hidden mb-3 group cursor-pointer border border-slate-200/80 transition-all duration-200 hover:shadow-md"
+        style={{
+          aspectRatio: '16/10',
+          background: 'linear-gradient(135deg, #F8FAFC 0%, #EEF2F6 100%)',
+        }}
+        title="Cliquer pour choisir une image sur votre appareil"
+      >
+        {isUploading ? (
+          <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/55 backdrop-blur-sm text-white">
+            <Loader2 className="w-7 h-7 animate-spin mb-2" />
+            <p className="text-xs font-semibold">Téléversement en cours...</p>
+          </div>
+        ) : hasImage ? (
+          <>
+            {/* Real image display */}
+            <img
+              src={value}
+              alt={imgField.label}
+              onError={() => setImgError(true)}
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+
+            {/* Hover overlay: "Changer l'image" */}
+            <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-1.5 text-white">
+              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center transition-transform group-hover:scale-110">
+                <Camera className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xs font-semibold tracking-wide">
+                Changer l&apos;image
+              </span>
+              <span className="text-[10.5px] text-white/80">
+                Cliquer pour parcourir votre appareil
+              </span>
+            </div>
+
+            {/* Delete button */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation()
+                onClear()
+              }}
+              className="absolute top-2.5 right-2.5 z-20 w-7 h-7 rounded-full flex items-center justify-center bg-black/60 hover:bg-red-600 text-white transition-all cursor-pointer shadow-sm hover:scale-110"
+              title="Supprimer cette image"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </>
+        ) : (
+          /* Empty / Upload prompt */
+          <div className="w-full h-full flex flex-col items-center justify-center gap-2 p-4 text-center">
+            <div className="w-11 h-11 rounded-full bg-white shadow-sm border border-slate-200 flex items-center justify-center transition-transform group-hover:scale-110 group-hover:border-slate-900">
+              <Upload className="w-5 h-5 text-slate-600 group-hover:text-slate-900 transition-colors" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-800">
+                Choisir une image depuis l&apos;appareil
+              </p>
+              <p className="text-[10.5px] text-slate-500 mt-0.5">
+                Glisser-déposer ou cliquer pour parcourir
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Action Buttons Row */}
+      <div className="flex items-center gap-2 mb-1.5">
+        <button
+          type="button"
+          onClick={onPickDevice}
+          disabled={isUploading}
+          className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-[#0F172A] hover:bg-slate-800 active:scale-[0.98] text-white text-xs font-semibold transition-all shadow-sm cursor-pointer disabled:opacity-60"
+        >
+          {isUploading ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              Enregistrement...
+            </>
+          ) : (
+            <>
+              <Upload className="w-3.5 h-3.5 text-[#38BDF8]" />
+              {hasImage ? "Remplacer l'image" : "Téléverser depuis l'appareil"}
+            </>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setShowUrlInput((v) => !v)}
+          className="px-2.5 py-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-600 text-xs font-medium transition-colors cursor-pointer"
+          title="Modifier l'URL directement"
+        >
+          URL
+        </button>
+      </div>
+
+      {/* Collapsible raw URL input */}
+      {showUrlInput && (
+        <div className="mt-2 mb-1 pt-2 border-t border-slate-100">
+          <input
+            type="text"
+            value={value}
+            onChange={(e) => onChangeUrl(e.target.value)}
+            placeholder="https://... ou /images/..."
+            className="w-full text-xs px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
+          />
+        </div>
+      )}
+
+      {imgField.hint && (
+        <p className="text-[10.5px] text-slate-400 mt-2 leading-relaxed">
+          {imgField.hint}
+        </p>
+      )}
+    </div>
+  )
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AdminWebsiteInfoPage() {
@@ -327,7 +539,9 @@ export default function AdminWebsiteInfoPage() {
   const loadConfig = useCallback(async () => {
     // 1. Instant local cache for seamless refresh without flicker
     try {
-      const cached = typeof window !== 'undefined' ? localStorage.getItem('dzrent_site_config') : null
+      const cached = typeof window !== 'undefined'
+        ? (localStorage.getItem('dzrent_site_config_v2') || localStorage.getItem('dzrent_site_config'))
+        : null
       if (cached) {
         setData(prev => ({ ...prev, ...JSON.parse(cached) }))
       }
@@ -340,6 +554,7 @@ export default function AdminWebsiteInfoPage() {
         const merged = { ...DEFAULT_SITE_CONFIG, ...cfg }
         setData(merged)
         try {
+          localStorage.setItem('dzrent_site_config_v2', JSON.stringify(merged))
           localStorage.setItem('dzrent_site_config', JSON.stringify(merged))
         } catch {}
       }
@@ -366,6 +581,7 @@ export default function AdminWebsiteInfoPage() {
       if (json.config) {
         setData(prev => ({ ...prev, ...json.config }))
         try {
+          localStorage.setItem('dzrent_site_config_v2', JSON.stringify(json.config))
           localStorage.setItem('dzrent_site_config', JSON.stringify(json.config))
         } catch {}
       }
@@ -380,29 +596,59 @@ export default function AdminWebsiteInfoPage() {
     }
   }
 
-  // ─── Image upload ─────────────────────────────────────────────────────────
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    const fieldKey = uploadFieldRef.current
+  // ─── Image upload with immediate auto-save to database & storage ──────────────
+  const handleUploadFile = async (file: File, fieldKey: string) => {
     if (!file || !fieldKey) return
-    e.target.value = ''
 
     setUploadingKey(fieldKey)
     try {
       const formData = new FormData()
       formData.append('file', file)
       const res = await fetch('/api/admin/upload', { method: 'POST', body: formData })
-      if (!res.ok) throw new Error('Échec du téléversement')
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}))
+        throw new Error(errJson.error || 'Échec du téléversement')
+      }
       const json = await res.json()
       const url = json.url || json.publicUrl || json.path || ''
-      setData(prev => ({ ...prev, [fieldKey]: url }))
-      showIosToast('Image téléversée ✓', 'success')
+      if (!url) throw new Error('URL d’image invalide')
+
+      // 1. Update component state immediately
+      const updatedData = { ...data, [fieldKey]: url }
+      setData(updatedData)
+
+      // 2. Persist to local caches immediately
+      try {
+        localStorage.setItem('dzrent_site_config_v2', JSON.stringify(updatedData))
+        localStorage.setItem('dzrent_site_config', JSON.stringify(updatedData))
+      } catch {}
+
+      // 3. Auto-save to Supabase Storage backend in background
+      try {
+        await fetch('/api/admin/site-config', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedData),
+        })
+      } catch (saveErr) {
+        console.warn('Auto-save to backend warning:', saveErr)
+      }
+
+      showIosToast('Image mise à jour et enregistrée en direct ✓', 'success')
     } catch (err: any) {
       showIosToast(err.message || 'Erreur de téléversement', 'error')
     } finally {
       setUploadingKey(null)
       uploadFieldRef.current = null
     }
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    const fieldKey = uploadFieldRef.current
+    if (!file || !fieldKey) return
+    e.target.value = ''
+    await handleUploadFile(file, fieldKey)
   }
 
   // ─── Navigation ──────────────────────────────────────────────────────────
@@ -707,103 +953,34 @@ export default function AdminWebsiteInfoPage() {
               {(currentSection.imageFields?.length ?? 0) > 0 && (
                 <div className="space-y-4">
                   {currentSection.imageFields!.map((imgField) => (
-                    <div
+                    <ImageFieldBox
                       key={imgField.key}
-                      className="rounded-[24px] p-5 transition-all duration-200 group"
-                      style={{
-                        background: '#FFFFFF',
-                        border: '1px solid #DFE3E8',
-                        boxShadow: '0 1px 2px rgba(15, 23, 42, 0.03), 0 4px 16px -2px rgba(15, 23, 42, 0.05)',
+                      imgField={imgField}
+                      value={data[imgField.key] ?? ''}
+                      isUploading={uploadingKey === imgField.key}
+                      onPickDevice={() => {
+                        uploadFieldRef.current = imgField.key
+                        fileInputRef.current?.click()
                       }}
-                    >
-                      <p
-                        style={{
-                          fontSize: 10.5,
-                          fontWeight: 700,
-                          color: '#64748B',
-                          letterSpacing: '0.06em',
-                          textTransform: 'uppercase',
-                          marginBottom: 10,
-                        }}
-                      >
-                        {imgField.label}
-                      </p>
-
-                      {/* Preview or placeholder */}
-                      {data[imgField.key] ? (
-                        <div
-                          className="relative rounded-xl overflow-hidden mb-3 group/img"
-                          style={{ aspectRatio: '16/10', background: '#F1F5F9' }}
-                        >
-                          <img
-                            src={data[imgField.key]}
-                            alt=""
-                            className="w-full h-full object-cover transition-transform duration-300 group-hover/img:scale-105"
-                          />
-                          <button
-                            onClick={() => setData(prev => ({ ...prev, [imgField.key]: '' }))}
-                            className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-150 hover:scale-110 hover:bg-red-500 cursor-pointer"
-                            style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)' }}
-                            title="Supprimer l'image"
-                          >
-                            <X style={{ width: 13, height: 13, color: '#fff' }} />
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => {
-                            uploadFieldRef.current = imgField.key
-                            fileInputRef.current?.click()
-                          }}
-                          className="w-full rounded-xl flex flex-col items-center justify-center gap-2 mb-3 transition-all duration-200 hover:border-[#0F172A] hover:bg-slate-50 cursor-pointer"
-                          style={{
-                            aspectRatio: '16/10',
-                            border: '1.5px dashed #CBD5E1',
-                            background: '#F8FAFC',
-                          }}
-                        >
-                          {uploadingKey === imgField.key ? (
-                            <Loader2 className="w-5 h-5 animate-spin text-[#0F172A]" />
-                          ) : (
-                            <>
-                              <ImageIcon className="w-6 h-6 text-[#94A3B8] transition-all duration-200 group-hover:scale-110 group-hover:text-[#0F172A]" />
-                              <p className="text-[11.5px] text-[#64748B] font-medium">
-                                Cliquer pour téléverser
-                              </p>
-                            </>
-                          )}
-                        </button>
-                      )}
-
-                      {/* URL input */}
-                      <input
-                        type="text"
-                        value={data[imgField.key] ?? ''}
-                        onChange={e => setData(prev => ({ ...prev, [imgField.key]: e.target.value }))}
-                        placeholder="Ou coller une URL d'image..."
-                        className="ios-field-input !py-2 !text-xs !mb-2.5"
-                      />
-
-                      <button
-                        onClick={() => {
-                          uploadFieldRef.current = imgField.key
-                          fileInputRef.current?.click()
-                        }}
-                        className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl transition-all duration-200 bg-[#F1F5F9] hover:bg-slate-200 text-[#0F172A] border border-slate-200 font-semibold cursor-pointer"
-                        style={{
-                          fontSize: 11.5,
-                        }}
-                      >
-                        <Upload style={{ width: 13, height: 13 }} />
-                        Téléverser
-                      </button>
-
-                      {imgField.hint && (
-                        <p style={{ fontSize: 10.5, color: '#94A3B8', marginTop: 7, lineHeight: 1.4 }}>
-                          {imgField.hint}
-                        </p>
-                      )}
-                    </div>
+                      onDropFile={(file) => handleUploadFile(file, imgField.key)}
+                      onClear={() => {
+                        const updated = { ...data, [imgField.key]: '' }
+                        setData(updated)
+                        try {
+                          localStorage.setItem('dzrent_site_config_v2', JSON.stringify(updated))
+                          localStorage.setItem('dzrent_site_config', JSON.stringify(updated))
+                        } catch {}
+                        fetch('/api/admin/site-config', {
+                          method: 'PUT',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(updated),
+                        }).catch(() => {})
+                        showIosToast('Image retirée ✓', 'info')
+                      }}
+                      onChangeUrl={(url) => {
+                        setData((prev) => ({ ...prev, [imgField.key]: url }))
+                      }}
+                    />
                   ))}
                 </div>
               )}

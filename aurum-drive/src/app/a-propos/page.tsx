@@ -6,8 +6,10 @@ import Link from "next/link";
 import { BRAND, ROUTES } from "@/lib/config";
 import { stats } from "@/lib/data";
 import { ShieldCheck, Award, ArrowUpRight, Plane } from "lucide-react";
+import { useSiteConfig } from "@/lib/use-site-config";
 
 export default function AboutPage() {
+  const siteConfig = useSiteConfig();
   return (
     <div id="main" className="min-h-screen py-6 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-20">
       {/* Header */}
@@ -46,7 +48,7 @@ export default function AboutPage() {
           }}
         >
           <Image
-            src="/images/wee.png"
+            src={siteConfig.about_image || "/images/wee.png"}
             alt="Flotte IZEM MOTORS Alger"
             fill
             sizes="(max-width: 1024px) 100vw, 50vw"

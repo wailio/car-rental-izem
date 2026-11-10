@@ -18,8 +18,10 @@ import {
 } from "lucide-react";
 import { MobileMenuDrawer } from "@/components/navigation/MobileMenuDrawer";
 import { IzemBrandLockup } from "@/components/common/IzemBrandLockup";
+import { useSiteConfig } from "@/lib/use-site-config";
 
 export default function ContactPage() {
+  const siteConfig = useSiteConfig();
   const [scrollY, setScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -88,7 +90,7 @@ export default function ContactPage() {
             <div
               className="absolute inset-x-0 w-full h-[145%] -top-[20%] bg-cover bg-no-repeat"
               style={{
-                backgroundImage: "url('/images/bbg.jpg')",
+                backgroundImage: `url('${siteConfig.contact_bg_image || "/images/bbg.jpg"}')`,
                 backgroundPosition: "center 48%",
               }}
             />
@@ -205,7 +207,7 @@ export default function ContactPage() {
             {/* Rentgo Client Image with rounded corners */}
             <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-sm bg-gray-100">
               <Image
-                src="/images/contact-us-image.jpg"
+                src={siteConfig.contact_client_image || "/images/contact-us-image.jpg"}
                 alt="Service client IZEM MOTORS"
                 fill
                 priority

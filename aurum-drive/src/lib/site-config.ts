@@ -137,7 +137,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   airport_terminal: 'Terminal 1 (National) & Terminal 4 (Ouest International)',
   hours: '7j/7, 24h/24 pour les arrivées aéroport · Lun–Sam 08h00–19h00',
   maps_embed_url: 'https://maps.google.com/?q=Aeroport+d+Alger+Houari+Boumediene',
-  contact_bg_image: '/images/contact-bg.png',
+  contact_bg_image: '/images/bbg.jpg',
   contact_client_image: '/images/contact-us-image.jpg',
 
   // ── 2. Accueil & Hero (/) ───────────────────────────────────────────────────
