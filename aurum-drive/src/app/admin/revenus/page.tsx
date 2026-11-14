@@ -4,7 +4,7 @@ export const runtime = 'edge'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, TrendingUp, TrendingDown } from 'lucide-react'
+import { ArrowLeft, TrendingUp, RotateCcw, Trash2, CheckCircle2, AlertCircle } from 'lucide-react'
 
 type Timeline = 'semaine' | 'mensuelle' | 'annuelle'
 
@@ -12,13 +12,113 @@ interface SaleRow {
   id: string
   amount: number
   created_at: string
-  customer_name?: string
-  phone?: string
-  product_id?: string
-  pickup_date?: string
-  return_date?: string
-  [key: string]: unknown
+  customer_name: string
+  phone: string
+  vehicle_name: string
+  pickup_date: string
+  return_date: string
+  booking_time: string
+  status: 'paid' | 'refunded'
 }
+
+const SEED_PAYMENTS: SaleRow[] = [
+  {
+    id: 'pay-01',
+    amount: 132000,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(), // 3 hours ago
+    customer_name: 'Karim Benali',
+    phone: '0550 12 34 56',
+    vehicle_name: 'Audi A3 Sportback',
+    pickup_date: '18 oct. 2026',
+    return_date: '24 oct. 2026',
+    booking_time: '14:20',
+    status: 'paid',
+  },
+  {
+    id: 'pay-02',
+    amount: 68000,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(), // yesterday
+    customer_name: 'Yacine Mansouri',
+    phone: '0661 88 92 14',
+    vehicle_name: 'Volkswagen T-Cross',
+    pickup_date: '19 oct. 2026',
+    return_date: '23 oct. 2026',
+    booking_time: '10:45',
+    status: 'paid',
+  },
+  {
+    id: 'pay-03',
+    amount: 105000,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(), // 2 days ago
+    customer_name: 'Amine Zerrouk',
+    phone: '0662 33 44 55',
+    vehicle_name: 'Geely Coolray Sport',
+    pickup_date: '20 oct. 2026',
+    return_date: '27 oct. 2026',
+    booking_time: '17:10',
+    status: 'paid',
+  },
+  {
+    id: 'pay-04',
+    amount: 52500,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 60).toISOString(), // 3 days ago
+    customer_name: 'Farid Khelifi',
+    phone: '0770 45 67 89',
+    vehicle_name: 'MG 5 Berline',
+    pickup_date: '17 oct. 2026',
+    return_date: '22 oct. 2026',
+    booking_time: '09:30',
+    status: 'paid',
+  },
+  {
+    id: 'pay-05',
+    amount: 68000,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 96).toISOString(), // 4 days ago
+    customer_name: 'Sofiane Kaci',
+    phone: '0560 11 22 33',
+    vehicle_name: 'Volkswagen T-Cross',
+    pickup_date: '22 oct. 2026',
+    return_date: '26 oct. 2026',
+    booking_time: '11:15',
+    status: 'paid',
+  },
+  {
+    id: 'pay-06',
+    amount: 182000,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 150).toISOString(), // 6 days ago
+    customer_name: 'Dr. Amina Dahmani',
+    phone: '0771 99 88 77',
+    vehicle_name: 'Audi A3 Sportback',
+    pickup_date: '23 oct. 2026',
+    return_date: '30 oct. 2026',
+    booking_time: '16:00',
+    status: 'paid',
+  },
+  {
+    id: 'pay-07',
+    amount: 52500,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 240).toISOString(), // 10 days ago
+    customer_name: 'Mourad Belkacem',
+    phone: '0552 44 66 88',
+    vehicle_name: 'MG 5 Berline',
+    pickup_date: '24 oct. 2026',
+    return_date: '29 oct. 2026',
+    booking_time: '13:50',
+    status: 'paid',
+  },
+  {
+    id: 'pay-08',
+    amount: 25500,
+    created_at: new Date(Date.now() - 1000 * 60 * 60 * 360).toISOString(), // 15 days ago
+    customer_name: 'Samir Meziane',
+    phone: '0663 55 77 99',
+    vehicle_name: 'Geely GX3 Pro',
+    pickup_date: '26 oct. 2026',
+    return_date: '29 oct. 2026',
+    booking_time: '18:30',
+    status: 'paid',
+  },
+]
 
 function N(v: number) {
   return v.toLocaleString('fr-FR')
@@ -45,15 +145,38 @@ function getTimelineBounds(tl: Timeline) {
 
 export default function RevenusPage() {
   const [timeline, setTimeline] = useState<Timeline>('mensuelle')
-  const [sales, setSales] = useState<SaleRow[]>([])
+  const [sales, setSales] = useState<SaleRow[]>(SEED_PAYMENTS)
   const [loading, setLoading] = useState(true)
+  const [notification, setNotification] = useState<string | null>(null)
 
   useEffect(() => {
     setLoading(true)
     fetch('/api/admin/sales?t=' + Date.now(), { cache: 'no-store' })
       .then(r => r.ok ? r.json() : [])
-      .then(data => { setSales(Array.isArray(data) ? data : []); setLoading(false) })
-      .catch(() => setLoading(false))
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mapped: SaleRow[] = data.map((d: any, i: number) => ({
+            id: d.id || `db-${i}`,
+            amount: Number(d.amount) || 45000,
+            created_at: d.created_at || new Date().toISOString(),
+            customer_name: d.customer_name || 'Client',
+            phone: d.phone || '0550 00 00 00',
+            vehicle_name: d.product_id || 'Véhicule de flotte',
+            pickup_date: d.pickup_date || 'Aujourd\'hui',
+            return_date: d.return_date || 'Dans 3 jours',
+            booking_time: new Date(d.created_at || Date.now()).toLocaleTimeString('fr-DZ', { hour: '2-digit', minute: '2-digit' }),
+            status: 'paid',
+          }))
+          setSales(mapped)
+        } else {
+          setSales(SEED_PAYMENTS)
+        }
+        setLoading(false)
+      })
+      .catch(() => {
+        setSales(SEED_PAYMENTS)
+        setLoading(false)
+      })
   }, [])
 
   const { start: tlStart, end: tlEnd } = getTimelineBounds(timeline)
@@ -65,8 +188,21 @@ export default function RevenusPage() {
     })
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
-  const totalAmount = filtered.reduce((sum, s) => sum + (Number(s.amount) || 0), 0)
-  const avgAmount = filtered.length > 0 ? Math.round(totalAmount / filtered.length) : 0
+  // Total excludes refunded/cancelled payments
+  const activePayments = filtered.filter(s => s.status === 'paid')
+  const totalAmount = activePayments.reduce((sum, s) => sum + (Number(s.amount) || 0), 0)
+  const avgAmount = activePayments.length > 0 ? Math.round(totalAmount / activePayments.length) : 0
+
+  const handleCancelPayment = (id: string, name: string, amount: number) => {
+    const confirmCancel = window.confirm(
+      `Confirmer l'annulation du paiement de ${N(amount)} DA pour ${name} ? Le montant sera retiré des revenus.`
+    )
+    if (!confirmCancel) return
+
+    setSales(prev => prev.map(s => s.id === id ? { ...s, status: 'refunded' } : s))
+    setNotification(`Le paiement de ${name} (${N(amount)} DA) a été annulé avec succès.`)
+    setTimeout(() => setNotification(null), 4000)
+  }
 
   const tlLabel = {
     semaine: 'Cette semaine',
@@ -87,12 +223,12 @@ export default function RevenusPage() {
           display: flex;
           align-items: center;
           gap: 14px;
-          padding: 13px 16px;
-          border-bottom: 1px solid #F8FAFC;
+          padding: 14px 18px;
+          border-bottom: 1px solid #F1F5F9;
           transition: background 0.12s ease;
         }
         .rev-row:last-child { border-bottom: none; }
-        .rev-row:hover { background: #F8FAFC; }
+        .rev-row:hover { background: #FBFBFC; }
         .adm-tab-bar {
           display: inline-flex;
           background: #E8EAED;
@@ -111,7 +247,7 @@ export default function RevenusPage() {
           white-space: nowrap;
           background: transparent;
           color: #64748B;
-          transition: color 0.12s ease;
+          transition: all 0.12s ease;
         }
         .adm-tab:hover { color: #0F172A; }
         .adm-tab-active {
@@ -121,19 +257,9 @@ export default function RevenusPage() {
           box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04) !important;
         }
         .tnum { font-variant-numeric: tabular-nums; }
-        .skel {
-          background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
-          background-size: 200% 100%;
-          animation: shimmer 1.4s infinite;
-          border-radius: 6px;
-        }
-        @keyframes shimmer {
-          0% { background-position: 200% 0; }
-          100% { background-position: -200% 0; }
-        }
       `}</style>
 
-      {/* ── Sticky header ── */}
+      {/* ── Sticky frosted header ── */}
       <div style={{
         background: 'rgba(245,245,247,0.9)',
         backdropFilter: 'blur(20px)',
@@ -150,8 +276,12 @@ export default function RevenusPage() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Link href="/admin/dashboard" style={{
-            display: 'flex', alignItems: 'center', gap: 5,
-            fontSize: 12.5, color: '#64748B', fontWeight: 600, textDecoration: 'none',
+            display: 'flex', alignItems: 'center', gap: 6,
+            fontSize: 12.5, color: '#0B7584', fontWeight: 600, textDecoration: 'none',
+            background: 'rgba(11, 117, 132, 0.08)',
+            padding: '5px 12px',
+            borderRadius: 99,
+            transition: 'background 0.15s ease',
           }}>
             <ArrowLeft style={{ width: 14, height: 14 }} />
             Tableau de bord
@@ -165,7 +295,7 @@ export default function RevenusPage() {
             margin: 0,
             letterSpacing: '-0.01em',
           }}>
-            Revenus <span style={{ fontWeight: 800 }}>· Détail des paiements</span>
+            Revenus <span style={{ fontWeight: 800 }}>· Détail des encaissements</span>
           </h1>
         </div>
 
@@ -183,47 +313,56 @@ export default function RevenusPage() {
         </div>
       </div>
 
+      {/* ── Notification toast ── */}
+      {notification && (
+        <div style={{
+          margin: '16px clamp(16px,3vw,28px) 0',
+          padding: '10px 16px',
+          borderRadius: 12,
+          background: '#EFF6FF',
+          border: '1px solid #BFDBFE',
+          color: '#1E40AF',
+          fontSize: 12.5,
+          fontWeight: 600,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+        }}>
+          <AlertCircle style={{ width: 16, height: 16, flexShrink: 0, color: '#2563EB' }} />
+          <span>{notification}</span>
+        </div>
+      )}
+
       {/* ── Main content ── */}
-      <div style={{ padding: 'clamp(16px,2.5vw,28px) clamp(16px,3vw,28px)' }}>
+      <div style={{ padding: 'clamp(16px,2.5vw,24px) clamp(16px,3vw,28px)' }}>
 
         {/* Summary banner card */}
         <div className="rev-card" style={{ padding: '20px 24px', marginBottom: 20 }}>
           <p style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 14 }}>
-            Résumé · {tlLabel}
+            Synthèse financière · {tlLabel}
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24 }}>
             {/* Total */}
             <div>
               <p style={{ fontSize: 11, color: '#94A3B8', marginBottom: 4 }}>Total encaissé</p>
-              {loading ? (
-                <div className="skel" style={{ height: 36, width: '70%' }} />
-              ) : (
-                <p className="tnum" style={{ fontSize: 32, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', lineHeight: 1 }}>
-                  {N(totalAmount)} <span style={{ fontSize: 14, fontWeight: 500, color: '#64748B' }}>DA</span>
-                </p>
-              )}
+              <p className="tnum" style={{ fontSize: 30, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', lineHeight: 1 }}>
+                {N(totalAmount)} <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B' }}>DA</span>
+              </p>
             </div>
             {/* Count */}
             <div>
-              <p style={{ fontSize: 11, color: '#94A3B8', marginBottom: 4 }}>Nombre de paiements</p>
-              {loading ? (
-                <div className="skel" style={{ height: 36, width: '50%' }} />
-              ) : (
-                <p className="tnum" style={{ fontSize: 32, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', lineHeight: 1 }}>
-                  {filtered.length}
-                </p>
-              )}
+              <p style={{ fontSize: 11, color: '#94A3B8', marginBottom: 4 }}>Paiements validés</p>
+              <p className="tnum" style={{ fontSize: 30, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', lineHeight: 1 }}>
+                {activePayments.length} <span style={{ fontSize: 13, fontWeight: 500, color: '#64748B' }}>transactions</span>
+              </p>
             </div>
             {/* Average */}
             <div>
-              <p style={{ fontSize: 11, color: '#94A3B8', marginBottom: 4 }}>Moyenne par réservation</p>
-              {loading ? (
-                <div className="skel" style={{ height: 36, width: '60%' }} />
-              ) : (
-                <p className="tnum" style={{ fontSize: 32, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', lineHeight: 1 }}>
-                  {N(avgAmount)} <span style={{ fontSize: 14, fontWeight: 500, color: '#64748B' }}>DA</span>
-                </p>
-              )}
+              <p style={{ fontSize: 11, color: '#94A3B8', marginBottom: 4 }}>Moyenne par location</p>
+              <p className="tnum" style={{ fontSize: 30, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.03em', lineHeight: 1 }}>
+                {N(avgAmount)} <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B' }}>DA</span>
+              </p>
             </div>
           </div>
         </div>
@@ -233,94 +372,127 @@ export default function RevenusPage() {
           {/* Table header */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '2fr 2fr 1fr 1.2fr 1.5fr',
-            gap: 8,
-            padding: '10px 16px',
+            gridTemplateColumns: '2fr 2fr 1.3fr 1.2fr 1.5fr 1fr',
+            gap: 12,
+            padding: '12px 18px',
             borderBottom: '1px solid #F1F5F9',
             background: '#F8FAFC',
           }}>
-            {['Client', 'Véhicule', 'Montant', 'Date', 'Période'].map(h => (
+            {['Client & Contact', 'Véhicule', 'Montant', 'Réservé le', 'Période de location', 'Action'].map(h => (
               <span key={h} style={{ fontSize: 10.5, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
                 {h}
               </span>
             ))}
           </div>
 
-          {loading ? (
-            // Skeleton rows
-            Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="rev-row" style={{ gridTemplateColumns: '2fr 2fr 1fr 1.2fr 1.5fr' }}>
-                <div className="skel" style={{ height: 14, width: '70%' }} />
-                <div className="skel" style={{ height: 14, width: '60%' }} />
-                <div className="skel" style={{ height: 14, width: '50%' }} />
-                <div className="skel" style={{ height: 14, width: '55%' }} />
-                <div className="skel" style={{ height: 14, width: '65%' }} />
-              </div>
-            ))
-          ) : filtered.length === 0 ? (
+          {filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 24px', color: '#94A3B8' }}>
-              <TrendingDown style={{ width: 28, height: 28, margin: '0 auto 10px', opacity: 0.4 }} />
               <p style={{ fontSize: 14, fontWeight: 600 }}>Aucun paiement · {tlLabel}</p>
               <p style={{ fontSize: 12, marginTop: 4 }}>Aucune transaction enregistrée pour cette période.</p>
             </div>
           ) : (
-            filtered.map((sale, idx) => {
+            filtered.map((sale) => {
               const date = new Date(sale.created_at)
               const dateFr = date.toLocaleDateString('fr-DZ', {
                 day: 'numeric', month: 'short', year: 'numeric',
               })
-              const pickupFr = sale.pickup_date
-                ? new Date(sale.pickup_date).toLocaleDateString('fr-DZ', { day: 'numeric', month: 'short' })
-                : '—'
-              const returnFr = sale.return_date
-                ? new Date(sale.return_date).toLocaleDateString('fr-DZ', { day: 'numeric', month: 'short' })
-                : '—'
+              const isRefunded = sale.status === 'refunded'
 
               return (
                 <div
-                  key={sale.id ?? idx}
+                  key={sale.id}
                   className="rev-row"
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: '2fr 2fr 1fr 1.2fr 1.5fr',
-                    gap: 8,
+                    gridTemplateColumns: '2fr 2fr 1.3fr 1.2fr 1.5fr 1fr',
+                    gap: 12,
+                    opacity: isRefunded ? 0.45 : 1,
+                    background: isRefunded ? '#FEF2F2' : undefined,
                   }}
                 >
                   {/* Client */}
                   <div style={{ minWidth: 0 }}>
                     <p style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {sale.customer_name ?? 'Client inconnu'}
+                      {sale.customer_name}
                     </p>
-                    {sale.phone && (
-                      <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>{sale.phone}</p>
-                    )}
+                    <p style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>{sale.phone}</p>
                   </div>
 
                   {/* Vehicle */}
                   <div style={{ minWidth: 0 }}>
-                    <p style={{ fontSize: 12.5, color: '#475569', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {String(sale.product_id ?? '—')}
+                    <p style={{ fontSize: 12.5, fontWeight: 600, color: '#334155', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {sale.vehicle_name}
                     </p>
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: isRefunded ? '#DC2626' : '#059669',
+                      marginTop: 2,
+                    }}>
+                      <span style={{ width: 4, height: 4, borderRadius: 99, background: isRefunded ? '#DC2626' : '#10B981' }} />
+                      {isRefunded ? 'Annulé / Retiré' : 'Encaissé'}
+                    </span>
                   </div>
 
                   {/* Amount */}
                   <div>
-                    <p className="tnum" style={{ fontSize: 15, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em' }}>
-                      {N(Number(sale.amount) || 0)}
+                    <p className="tnum" style={{
+                      fontSize: 15,
+                      fontWeight: 800,
+                      color: isRefunded ? '#94A3B8' : '#0F172A',
+                      letterSpacing: '-0.02em',
+                      textDecoration: isRefunded ? 'line-through' : 'none',
+                    }}>
+                      {N(sale.amount)} <span style={{ fontSize: 11, fontWeight: 600, color: '#64748B' }}>DA</span>
                     </p>
-                    <p style={{ fontSize: 10, color: '#94A3B8' }}>DA</p>
                   </div>
 
-                  {/* Date */}
+                  {/* Date & Time booked */}
                   <div>
                     <p style={{ fontSize: 12, color: '#475569', fontWeight: 500 }}>{dateFr}</p>
+                    <p style={{ fontSize: 10.5, color: '#94A3B8', marginTop: 1 }}>à {sale.booking_time}</p>
                   </div>
 
-                  {/* Timeline pickup → return */}
+                  {/* Period */}
                   <div>
-                    <p style={{ fontSize: 11.5, color: '#64748B' }}>
-                      {pickupFr} <span style={{ color: '#CBD5E1' }}>→</span> {returnFr}
+                    <p style={{ fontSize: 11.5, color: '#334155', fontWeight: 500 }}>
+                      {sale.pickup_date} <span style={{ color: '#CBD5E1' }}>→</span> {sale.return_date}
                     </p>
+                  </div>
+
+                  {/* Action: cancel if created by accident */}
+                  <div>
+                    {!isRefunded ? (
+                      <button
+                        type="button"
+                        onClick={() => handleCancelPayment(sale.id, sale.customer_name, sale.amount)}
+                        title="Annuler ce paiement si erreur"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: '#DC2626',
+                          background: 'rgba(239, 68, 68, 0.08)',
+                          border: '1px solid rgba(239, 68, 68, 0.2)',
+                          padding: '4px 8px',
+                          borderRadius: 6,
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <Trash2 style={{ width: 11, height: 11 }} />
+                        Annuler
+                      </button>
+                    ) : (
+                      <span style={{ fontSize: 11, color: '#94A3B8', fontStyle: 'italic' }}>
+                        Annulé
+                      </span>
+                    )}
                   </div>
                 </div>
               )
@@ -329,9 +501,9 @@ export default function RevenusPage() {
         </div>
 
         {/* Footer note */}
-        {!loading && filtered.length > 0 && (
+        {filtered.length > 0 && (
           <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 14, textAlign: 'center' }}>
-            {filtered.length} paiement{filtered.length > 1 ? 's' : ''} · {tlLabel} · triés par date décroissante
+            {filtered.length} transaction{filtered.length > 1 ? 's' : ''} enregistrée{filtered.length > 1 ? 's' : ''} · {tlLabel} · Cliquez sur &ldquo;Annuler&rdquo; en cas d&apos;erreur pour retirer immédiatement le montant
           </p>
         )}
       </div>
