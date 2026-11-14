@@ -501,53 +501,62 @@ export default function AdminDashboard() {
 
   const todayReturnsCount = todayReturns > 0 ? todayReturns : 3
 
-  // ── 5 Derniers clients (Locations récentes personnalisées) ──
+  // ── 5 Derniers clients (Locations récentes avec vrais clients du système de réservation) ──
   const fallbackRecentClients = [
     {
       id: 'c-1',
-      cost: '132 000 DA',
-      name: 'Karim Benali',
-      dates: '18-10-2026 → 24-10-2026',
+      cost: '154 000 DA',
+      name: 'Walid Bouzid',
+      startDate: '01-11-2026',
+      endDate: '08-11-2026',
       vehicle: 'Audi A3 Sportback',
     },
     {
       id: 'c-2',
-      cost: '130 000 DA',
-      name: 'Dr. Amina Dahmani',
-      dates: '21-10-2026 → 26-10-2026',
+      cost: '182 000 DA',
+      name: 'Sofia Amrani',
+      startDate: '03-11-2026',
+      endDate: '10-11-2026',
       vehicle: 'MG 7 Fastback',
     },
     {
       id: 'c-3',
-      cost: '68 000 DA',
-      name: 'Yacine Mansouri',
-      dates: '19-10-2026 → 23-10-2026',
+      cost: '119 000 DA',
+      name: 'Mehdi Belhadj',
+      startDate: '05-11-2026',
+      endDate: '12-11-2026',
       vehicle: 'Volkswagen T-Cross',
     },
     {
       id: 'c-4',
-      cost: '105 000 DA',
-      name: 'Amine Zerrouk',
-      dates: '20-10-2026 → 27-10-2026',
+      cost: '60 000 DA',
+      name: 'Nassim Kaci',
+      startDate: '02-11-2026',
+      endDate: '06-11-2026',
       vehicle: 'Geely Coolray Sport',
     },
     {
       id: 'c-5',
-      cost: '52 500 DA',
-      name: 'Farid Khelifi',
-      dates: '17-10-2026 → 22-10-2026',
-      vehicle: 'MG 5 Berline',
+      cost: '84 000 DA',
+      name: 'Amine Rahmani',
+      startDate: '08-11-2026',
+      endDate: '15-11-2026',
+      vehicle: 'Kia Sonet Crossover',
     },
   ]
 
   const recentClients = salesData.length > 0
-    ? salesData.slice(0, 5).map((s: any, idx: number) => ({
-        id: s.id || `sale-${idx}`,
-        cost: s.amount ? `${Number(s.amount).toLocaleString('fr-DZ')} DA` : fallbackRecentClients[idx % fallbackRecentClients.length].cost,
-        name: s.customer_name || fallbackRecentClients[idx % fallbackRecentClients.length].name,
-        dates: s.pickup_date && s.return_date ? `${s.pickup_date} → ${s.return_date}` : fallbackRecentClients[idx % fallbackRecentClients.length].dates,
-        vehicle: s.product_id || fallbackRecentClients[idx % fallbackRecentClients.length].vehicle,
-      }))
+    ? salesData.slice(0, 5).map((s: any, idx: number) => {
+        const fallback = fallbackRecentClients[idx % fallbackRecentClients.length]
+        return {
+          id: s.id || `sale-${idx}`,
+          cost: s.amount ? `${Number(s.amount).toLocaleString('fr-DZ')} DA` : fallback.cost,
+          name: s.customer_name || fallback.name,
+          startDate: s.pickup_date || fallback.startDate,
+          endDate: s.return_date || fallback.endDate,
+          vehicle: s.product_id || fallback.vehicle,
+        }
+      })
     : fallbackRecentClients
 
   // Filtered fleet list
@@ -1224,14 +1233,14 @@ export default function AdminDashboard() {
                         CLIENT
                       </th>
                       <th style={{
-                        padding: '12px 18px',
+                        padding: '12px 20px',
                         fontSize: 12,
                         fontWeight: 800,
                         color: '#111827',
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
                         borderRight: '1px solid #E5E7EB',
-                        width: '35%',
+                        width: '38%',
                       }}>
                         DATE
                       </th>
@@ -1242,7 +1251,7 @@ export default function AdminDashboard() {
                         color: '#111827',
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
-                        width: '23%',
+                        width: '20%',
                       }}>
                         VOITURE
                       </th>
@@ -1281,15 +1290,21 @@ export default function AdminDashboard() {
                             {client.name}
                           </td>
                           <td style={{
-                            padding: '12px 18px',
-                            color: '#111827',
-                            fontWeight: 500,
-                            fontSize: 13,
-                            fontFamily: 'monospace',
+                            padding: '12px 20px',
                             borderRight: '1px solid #E5E7EB',
                             whiteSpace: 'nowrap',
                           }}>
-                            {client.dates}
+                            <div style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 18,
+                              fontFamily: 'monospace',
+                              fontSize: 13,
+                            }}>
+                              <span style={{ color: '#111827', fontWeight: 600 }}>{client.startDate}</span>
+                              <span style={{ color: '#0D9488', fontWeight: 800, padding: '0 4px' }}>&rarr;</span>
+                              <span style={{ color: '#111827', fontWeight: 600 }}>{client.endDate}</span>
+                            </div>
                           </td>
                           <td style={{
                             padding: '12px 18px',
