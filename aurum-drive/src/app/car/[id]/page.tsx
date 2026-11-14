@@ -72,8 +72,8 @@ export default function CustomerCarInterfacePage({
   }
 
   return (
-    <main className="min-h-screen w-full bg-[#1A1A1E] sm:bg-[#121316] flex items-center justify-center sm:py-6">
-      <div className="w-full sm:max-w-[420px] h-[100dvh] sm:h-[880px] sm:max-h-[92vh] sm:rounded-[42px] overflow-hidden shadow-2xl relative bg-[#F6F4EE] border sm:border-black/20 flex flex-col">
+    <main className="min-h-screen w-full bg-[#F7F5F0] flex items-center justify-center">
+      <div className="w-full sm:max-w-[430px] h-[100dvh] min-h-[100dvh] overflow-hidden relative bg-[#F7F5F0] flex flex-col sm:shadow-2xl sm:border sm:border-black/10">
         <CustomerAppView car={car} />
       </div>
     </main>
