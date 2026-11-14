@@ -466,19 +466,19 @@ export default function AdminDashboard() {
   // ── Baseline presets (realistic demo numbers so diagram and stats adapt immediately) ──
   const REVENUE_PRESETS = {
     semaine: {
-      baseline: 285000,
-      trend: '+18.4%',
-      sparkline: [28000, 34000, 31000, 44000, 38000, 52000, 58000],
+      baseline: 145000,
+      trend: '+12.5%',
+      sparkline: [14000, 18000, 16000, 24000, 22000, 26000, 25000],
     },
     mensuelle: {
-      baseline: 1240000,
+      baseline: 580000,
       trend: '+14.2%',
-      sparkline: [220000, 290000, 340000, 390000],
+      sparkline: [110000, 135000, 160000, 175000],
     },
     annuelle: {
-      baseline: 14850000,
-      trend: '+22.5%',
-      sparkline: [850000, 920000, 1050000, 1150000, 1100000, 1250000, 1180000, 1320000, 1280000, 1400000, 1380000, 1470000],
+      baseline: 6450000,
+      trend: '+18.0%',
+      sparkline: [380000, 420000, 490000, 520000, 510000, 560000, 540000, 610000, 580000, 620000, 600000, 620000],
     },
   } as const
 
@@ -661,22 +661,22 @@ export default function AdminDashboard() {
           <div className="order-1 lg:col-start-1 flex flex-col gap-4">
 
             {/* ── PRIMARY METRICS CARD ───────────────────────────────────────── */}
-            <div data-pop="left" className="admin-card" style={{ borderRadius: 18, padding: '16px 20px' }}>
+            <div data-pop="left" className="admin-card" style={{ borderRadius: 20, padding: '20px 24px' }}>
 
-              {/* ── TOP SECTION — 3 columns ───────────────────────────────── */}
+              {/* ── TOP SECTION — 3 organized columns ──────────────────────── */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr)',
-                gap: 12,
+                gap: 18,
               }}>
 
                 {/* Col 1 — Revenus */}
-                <div style={{ paddingRight: 14, borderRight: '1px solid #F1F5F9' }}>
-                  {/* Top row: Icon + Label on left, Timeline tabs on right */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <Banknote style={{ width: 16, height: 16, color: '#0B7584', strokeWidth: 2 }} />
-                      <span style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                <div style={{ paddingRight: 16, borderRight: '1px solid #F1F5F9' }}>
+                  {/* Top row: Icon + Label on left (same size across all columns), Timeline toggle on right */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 24, marginBottom: 8 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                      <Banknote style={{ width: 16, height: 16, color: '#0B7584', strokeWidth: 2, flexShrink: 0 }} />
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.07em', whiteSpace: 'nowrap' }}>
                         Revenus
                       </span>
                     </div>
@@ -696,20 +696,22 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {/* Body row: Left side has Number + Trend, Right side has the Sparkline! */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+                  {/* Body row: Left side has Number + Trend + 1-line subtitle, Right side has the Sparkline */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                     <Link href="/admin/revenus" style={{ textDecoration: 'none', minWidth: 0 }}>
-                      <p className="tnum" style={{
-                        fontSize: 'clamp(20px,2.2vw,25px)',
-                        fontWeight: 800,
-                        color: '#0F172A',
-                        letterSpacing: '-0.02em',
-                        lineHeight: 1.1,
-                        fontFamily: 'var(--font-heading)',
-                      }}>
-                        {N(displayRevenue)} <span style={{ fontSize: 12.5, fontWeight: 600, color: '#64748B' }}>DA</span>
-                      </p>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 3 }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, flexWrap: 'nowrap' }}>
+                        <span className="tnum" style={{
+                          fontSize: 20,
+                          fontWeight: 800,
+                          color: '#0F172A',
+                          letterSpacing: '-0.02em',
+                          lineHeight: 1.1,
+                          fontFamily: 'var(--font-heading)',
+                          whiteSpace: 'nowrap',
+                        }}>
+                          {N(displayRevenue)}
+                        </span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: '#64748B', whiteSpace: 'nowrap' }}>DA</span>
                         <span style={{
                           fontSize: 10,
                           fontWeight: 700,
@@ -717,92 +719,116 @@ export default function AdminDashboard() {
                           background: 'rgba(16, 185, 129, 0.1)',
                           padding: '1px 5px',
                           borderRadius: 4,
+                          whiteSpace: 'nowrap',
                         }}>
                           ↑ {displayTrend}
                         </span>
-                        <span style={{ fontSize: 10, color: '#94A3B8' }}>vs précédente</span>
                       </div>
+                      <p style={{
+                        fontSize: 11,
+                        color: '#64748B',
+                        marginTop: 4,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}>
+                        Total encaissé sur la période
+                      </p>
                     </Link>
 
-                    {/* Diagram placed on the right side! */}
+                    {/* Diagram placed on the right side */}
                     <div style={{ flexShrink: 0 }}>
-                      <Sparkline data={sparklineData} color="#0B7584" width={105} height={34} />
+                      <Sparkline data={sparklineData} color="#0B7584" width={105} height={32} />
                     </div>
                   </div>
                 </div>
 
                 {/* Col 2 — Retour d'aujourd'hui */}
-                <div style={{ padding: '0 12px', borderRight: '1px solid #F1F5F9' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                    <RotateCcw style={{ width: 15, height: 15, color: '#0B7584', strokeWidth: 2 }} />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                <div style={{ padding: '0 16px', borderRight: '1px solid #F1F5F9' }}>
+                  {/* Top row: Icon + Label on exact same horizontal line & 16px size */}
+                  <div style={{ display: 'flex', alignItems: 'center', minHeight: 24, gap: 7, marginBottom: 8 }}>
+                    <RotateCcw style={{ width: 16, height: 16, color: '#0B7584', strokeWidth: 2, flexShrink: 0 }} />
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.07em', whiteSpace: 'nowrap' }}>
                       Retours d&apos;aujourd&apos;hui
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                    <div>
-                      <p className="tnum" style={{
-                        fontSize: 'clamp(22px,2.4vw,28px)',
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                      <span className="tnum" style={{
+                        fontSize: 20,
                         fontWeight: 800,
                         color: '#0F172A',
                         letterSpacing: '-0.02em',
                         lineHeight: 1.1,
                         fontFamily: 'var(--font-heading)',
+                        whiteSpace: 'nowrap',
                       }}>
-                        {todayReturnsCount} <span style={{ fontSize: 12.5, fontWeight: 500, color: '#64748B' }}>véhicules</span>
-                      </p>
-                      <p style={{ fontSize: 10.5, color: '#64748B', marginTop: 3 }}>
-                        Restitutions prévues ce jour
-                      </p>
+                        {todayReturnsCount}
+                      </span>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: '#64748B', whiteSpace: 'nowrap' }}>véhicules</span>
                     </div>
-
-                    {/* Big smooth icon directly on bg, no rounded box! */}
-                    <RotateCcw style={{ width: 26, height: 26, color: '#0B7584', opacity: 0.8, strokeWidth: 1.7, flexShrink: 0 }} />
+                    <p style={{
+                      fontSize: 11,
+                      color: '#64748B',
+                      marginTop: 4,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}>
+                      Restitutions prévues au parc ce jour
+                    </p>
                   </div>
                 </div>
 
                 {/* Col 3 — Visiteurs aujourd'hui */}
-                <div style={{ paddingLeft: 12 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                    <Globe style={{ width: 15, height: 15, color: '#0B7584', strokeWidth: 2 }} />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                <div style={{ paddingLeft: 16 }}>
+                  {/* Top row: Icon + Label on exact same horizontal line & 16px size */}
+                  <div style={{ display: 'flex', alignItems: 'center', minHeight: 24, gap: 7, marginBottom: 8 }}>
+                    <Globe style={{ width: 16, height: 16, color: '#0B7584', strokeWidth: 2, flexShrink: 0 }} />
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.07em', whiteSpace: 'nowrap' }}>
                       Visiteurs aujourd&apos;hui
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                    <div>
-                      <p className="tnum" style={{
-                        fontSize: 'clamp(22px,2.4vw,28px)',
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                      <span className="tnum" style={{
+                        fontSize: 20,
                         fontWeight: 800,
                         color: '#0F172A',
                         letterSpacing: '-0.02em',
                         lineHeight: 1.1,
                         fontFamily: 'var(--font-heading)',
+                        whiteSpace: 'nowrap',
                       }}>
                         {counts.loading ? '—' : N(counts.visitors)}
-                      </p>
-                      <p style={{ fontSize: 10.5, color: '#64748B', marginTop: 3 }}>
-                        Visiteurs uniques réels
-                      </p>
+                      </span>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: '#64748B', whiteSpace: 'nowrap' }}>visites</span>
                     </div>
-
-                    {/* Big smooth icon directly on bg, no rounded box! */}
-                    <Globe style={{ width: 26, height: 26, color: '#0B7584', opacity: 0.8, strokeWidth: 1.7, flexShrink: 0 }} />
+                    <p style={{
+                      fontSize: 11,
+                      color: '#64748B',
+                      marginTop: 4,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}>
+                      Visiteurs uniques réels ce jour
+                    </p>
                   </div>
                 </div>
 
               </div>
 
-              {/* ── LOWER SECTION — 3 Secondary metrics with icons next to numbers ── */}
+              {/* ── LOWER SECTION — 3 Secondary metrics in 1-line formal format ── */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: 12,
-                marginTop: 12,
+                gap: 16,
+                marginTop: 16,
                 borderTop: '1px solid #F1F5F9',
-                paddingTop: 10,
+                paddingTop: 14,
               }}>
                 {[
                   {
@@ -837,16 +863,16 @@ export default function AdminDashboard() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: 10,
-                        padding: '4px 8px',
+                        padding: '4px 6px',
                         borderRight: i < 2 ? '1px solid #F1F5F9' : 'none',
                         transition: 'transform 0.15s ease',
                       }}
                     >
-                      {/* Luxury icon directly on background, no rounded box! */}
+                      {/* Luxury icon directly on background, same size (19px) */}
                       <IconComp
                         style={{
-                          width: 22,
-                          height: 22,
+                          width: 19,
+                          height: 19,
                           color: '#0B7584',
                           strokeWidth: 1.8,
                           flexShrink: 0,
@@ -854,11 +880,11 @@ export default function AdminDashboard() {
                       />
 
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, whiteSpace: 'nowrap' }}>
                           <span
                             className="tnum"
                             style={{
-                              fontSize: 18,
+                              fontSize: 17,
                               fontWeight: 800,
                               color: '#0F172A',
                               letterSpacing: '-0.02em',
@@ -883,7 +909,7 @@ export default function AdminDashboard() {
                         </div>
                         <p
                           style={{
-                            fontSize: 10,
+                            fontSize: 10.5,
                             color: '#94A3B8',
                             marginTop: 2,
                             overflow: 'hidden',
