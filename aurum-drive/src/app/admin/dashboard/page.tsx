@@ -505,7 +505,9 @@ export default function AdminDashboard() {
   const fallbackRecentClients = [
     {
       id: 'c-1',
+      number: '202511008',
       name: 'Karim Benali',
+      date: '17-10-2026',
       phone: '0550 12 34 56',
       vehicle: 'Audi A3 Sportback',
       amount: 44000,
@@ -516,7 +518,9 @@ export default function AdminDashboard() {
     },
     {
       id: 'c-2',
+      number: '202511007',
       name: 'Yacine Mansouri',
+      date: '22-10-2026',
       phone: '0661 88 92 14',
       vehicle: 'Volkswagen T-Cross',
       amount: 51000,
@@ -527,7 +531,9 @@ export default function AdminDashboard() {
     },
     {
       id: 'c-3',
+      number: '202508001',
       name: 'Amine Zerrouk',
+      date: '01-08-2026',
       phone: '0662 33 44 55',
       vehicle: 'Geely Coolray Sport',
       amount: 60000,
@@ -538,7 +544,9 @@ export default function AdminDashboard() {
     },
     {
       id: 'c-4',
+      number: '202508002',
       name: 'Sofiane Kaci',
+      date: '02-08-2026',
       phone: '0560 11 22 33',
       vehicle: 'Volkswagen T-Cross',
       amount: 51000,
@@ -549,7 +557,9 @@ export default function AdminDashboard() {
     },
     {
       id: 'c-5',
+      number: '202508003',
       name: 'Farid Khelifi',
+      date: '04-08-2026',
       phone: '0770 45 67 89',
       vehicle: 'MG 5 Berline',
       amount: 31500,
@@ -563,7 +573,9 @@ export default function AdminDashboard() {
   const recentClients = salesData.length > 0
     ? salesData.slice(0, 5).map((s: any, idx: number) => ({
         id: s.id || `sale-${idx}`,
+        number: s.order_number || `20251100${8 - idx}`,
         name: s.customer_name || 'Client',
+        date: s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-') : '17-10-2026',
         phone: s.phone || '0550 00 00 00',
         vehicle: s.product_id || 'Véhicule de flotte',
         amount: Number(s.amount) || 45000,
@@ -1029,188 +1041,6 @@ export default function AdminDashboard() {
               </Link>
             )}
 
-            {/* ── SECTION: 5 DERNIERS CLIENTS (UNDER DATA, ABOVE CARS) ───────── */}
-            <div data-pop="left" className="admin-card" style={{ borderRadius: 18, padding: '18px 22px' }}>
-              {/* Header */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <Users style={{ width: 16, height: 16, color: '#0B7584', strokeWidth: 2, flexShrink: 0 }} />
-                  <span style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-                    Derniers clients <span style={{ color: '#94A3B8', fontWeight: 500, textTransform: 'none' }}>• 5 dernières locations</span>
-                  </span>
-                </div>
-
-                <Link
-                  href="/admin/orders"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4,
-                    fontSize: 11.5,
-                    color: '#0B7584',
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                    transition: 'color 0.15s ease',
-                  }}
-                >
-                  Voir tout <ArrowUpRight style={{ width: 13, height: 13 }} />
-                </Link>
-              </div>
-
-              {/* Rows */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {recentClients.map((client, i) => (
-                  <div
-                    key={client.id || i}
-                    className="admin-row"
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1.4fr 1.4fr 1.3fr 1fr 0.9fr 36px',
-                      alignItems: 'center',
-                      gap: 12,
-                      padding: '10px 14px',
-                      borderRadius: 12,
-                      background: '#FFFFFF',
-                      border: '1px solid rgba(0, 0, 0, 0.05)',
-                    }}
-                  >
-                    {/* Client name + phone */}
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{
-                        fontSize: 13,
-                        fontWeight: 700,
-                        color: '#0F172A',
-                        margin: 0,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}>
-                        {client.name}
-                      </p>
-                      <p style={{
-                        fontSize: 11,
-                        color: '#64748B',
-                        margin: '1px 0 0 0',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 4,
-                        whiteSpace: 'nowrap',
-                      }}>
-                        <Phone style={{ width: 10, height: 10, color: '#94A3B8' }} />
-                        {client.phone}
-                      </p>
-                    </div>
-
-                    {/* Vehicle */}
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{
-                        fontSize: 12.5,
-                        fontWeight: 600,
-                        color: '#334155',
-                        margin: 0,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}>
-                        {client.vehicle}
-                      </p>
-                      <p style={{
-                        fontSize: 10.5,
-                        color: '#94A3B8',
-                        margin: '1px 0 0 0',
-                        whiteSpace: 'nowrap',
-                      }}>
-                        Contrat de location
-                      </p>
-                    </div>
-
-                    {/* Dates */}
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{
-                        fontSize: 11.5,
-                        color: '#475569',
-                        fontWeight: 500,
-                        margin: 0,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}>
-                        {client.dates}
-                      </p>
-                      <p style={{
-                        fontSize: 10.5,
-                        color: '#94A3B8',
-                        margin: '1px 0 0 0',
-                        whiteSpace: 'nowrap',
-                      }}>
-                        {client.timeAgo}
-                      </p>
-                    </div>
-
-                    {/* Amount */}
-                    <div style={{ minWidth: 0, whiteSpace: 'nowrap' }}>
-                      <span className="tnum" style={{ fontSize: 14, fontWeight: 800, color: '#0F172A' }}>
-                        {N(client.amount)}
-                      </span>
-                      <span style={{ fontSize: 10.5, fontWeight: 600, color: '#64748B', marginLeft: 3 }}>
-                        DA
-                      </span>
-                    </div>
-
-                    {/* Status Pill */}
-                    <div style={{ minWidth: 0 }}>
-                      <span style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
-                        padding: '2px 8px',
-                        borderRadius: 99,
-                        fontSize: 10.5,
-                        fontWeight: 600,
-                        background: client.status === 'confirmed' ? '#FFFBEB' : '#ECFDF5',
-                        color: client.status === 'confirmed' ? '#B45309' : '#047857',
-                        border: client.status === 'confirmed' ? '1px solid #FDE68A' : '1px solid #A7F3D0',
-                        whiteSpace: 'nowrap',
-                      }}>
-                        <span style={{
-                          width: 5,
-                          height: 5,
-                          borderRadius: 99,
-                          background: client.status === 'confirmed' ? '#F59E0B' : '#10B981',
-                        }} />
-                        {client.statusLabel}
-                      </span>
-                    </div>
-
-                    {/* Quick WhatsApp Action */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                      <a
-                        href={`https://wa.me/213${client.phone.replace(/\s+/g, '').replace(/^0/, '')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Contacter sur WhatsApp"
-                        style={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: 8,
-                          background: '#ECFDF5',
-                          border: '1px solid #A7F3D0',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#047857',
-                          textDecoration: 'none',
-                          transition: 'transform 0.15s ease',
-                        }}
-                      >
-                        <MessageCircle style={{ width: 13, height: 13 }} />
-                      </a>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* ── SECTION: ÉTAT DE LA FLOTTE EN TEMPS RÉEL (LOUÉS VS DISPONIBLES) ─ */}
             {/* Left side: Client who rented it / availability info. Right side: Car photo */}
             <div>
@@ -1382,6 +1212,137 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            {/* ── SECTION: LOCATIONS RÉCENTES (SHARP EDGED TABLE EXACTLY MATCHING IMAGE) ── */}
+            <div data-pop="left" style={{ marginTop: 24, marginBottom: 28 }}>
+              <h2 style={{
+                fontSize: 18,
+                fontWeight: 700,
+                color: '#0D9488',
+                margin: '0 0 12px 0',
+                letterSpacing: '-0.01em',
+              }}>
+                Locations récentes
+              </h2>
+
+              <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                <table style={{
+                  width: '100%',
+                  borderCollapse: 'collapse',
+                  border: '1px solid #E5E7EB',
+                  background: '#FFFFFF',
+                  fontSize: 13,
+                  textAlign: 'left',
+                }}>
+                  <thead>
+                    <tr style={{ background: '#F3F4F6', borderBottom: '1px solid #E5E7EB' }}>
+                      <th style={{
+                        padding: '12px 18px',
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: '#111827',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                        borderRight: '1px solid #E5E7EB',
+                        width: '22%',
+                      }}>
+                        NUMÉRO
+                      </th>
+                      <th style={{
+                        padding: '12px 18px',
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: '#111827',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                        borderRight: '1px solid #E5E7EB',
+                        width: '28%',
+                      }}>
+                        CLIENT
+                      </th>
+                      <th style={{
+                        padding: '12px 18px',
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: '#111827',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                        borderRight: '1px solid #E5E7EB',
+                        width: '24%',
+                      }}>
+                        DATE
+                      </th>
+                      <th style={{
+                        padding: '12px 18px',
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: '#111827',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                        width: '26%',
+                      }}>
+                        VOITURE
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentClients.map((client, idx) => {
+                      const isEven = idx % 2 === 1
+                      return (
+                        <tr
+                          key={client.id || idx}
+                          style={{
+                            background: isEven ? '#F3F4F6' : '#FFFFFF',
+                            borderBottom: '1px solid #E5E7EB',
+                          }}
+                        >
+                          <td style={{
+                            padding: '12px 18px',
+                            color: '#0D9488',
+                            fontWeight: 600,
+                            fontSize: 13,
+                            fontFamily: 'monospace',
+                            borderRight: '1px solid #E5E7EB',
+                            whiteSpace: 'nowrap',
+                          }}>
+                            {client.number}
+                          </td>
+                          <td style={{
+                            padding: '12px 18px',
+                            color: '#111827',
+                            fontWeight: 500,
+                            fontSize: 13,
+                            borderRight: '1px solid #E5E7EB',
+                            whiteSpace: 'nowrap',
+                          }}>
+                            {client.name}
+                          </td>
+                          <td style={{
+                            padding: '12px 18px',
+                            color: '#111827',
+                            fontWeight: 500,
+                            fontSize: 13,
+                            borderRight: '1px solid #E5E7EB',
+                            whiteSpace: 'nowrap',
+                          }}>
+                            {client.date}
+                          </td>
+                          <td style={{
+                            padding: '12px 18px',
+                            color: '#111827',
+                            fontWeight: 500,
+                            fontSize: 13,
+                            whiteSpace: 'nowrap',
+                          }}>
+                            {client.vehicle}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             {/* ── ACTIONS RAPIDES ───────────────────────────────────────────── */}
             <div>
               <p style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8, paddingLeft: 2 }}>
@@ -1413,28 +1374,6 @@ export default function AdminDashboard() {
                     </div>
                     <ChevronRight style={{ width: 14, height: 14, color: '#94A3B8', flexShrink: 0 }} />
                   </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* ── SYNC STATUS & INFRASTRUCTURE ──────────────────────────────── */}
-            <div>
-              <p style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8, paddingLeft: 2 }}>
-                Infrastructure
-              </p>
-              <div className="admin-card" style={{ borderRadius: 16, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {[
-                  { label: 'Supabase Flotte & Réservations', sub: 'Base PostgreSQL temps réel · tables vehicles, reservations', status: true },
-                  { label: 'Disponibilité & Calendrier', sub: 'Synchronisation automatique des dates de prise en charge', status: true },
-                  { label: 'Sécurité RLS & Accès', sub: 'Service key encodée · session admin sécurisée', status: true },
-                ].map((row, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ width: 6, height: 6, borderRadius: 99, background: row.status ? '#10B981' : '#EF4444', flexShrink: 0 }} />
-                    <div>
-                      <p style={{ fontSize: 12.5, fontWeight: 600, color: '#0F172A' }}>{row.label}</p>
-                      <p style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>{row.sub}</p>
-                    </div>
-                  </div>
                 ))}
               </div>
             </div>

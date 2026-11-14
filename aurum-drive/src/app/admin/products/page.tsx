@@ -738,7 +738,7 @@ export default function VehiclesFleetPage() {
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11.5, color: '#64748B', flexWrap: 'wrap' }}>
                               <span>{car.currentRental.startDate} → {car.currentRental.endDate}</span>
-                              <span style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontWeight: 600, padding: '1px 8px', borderRadius: 99, fontSize: 11 }}>
+                              <span style={{ color: '#D97706', fontWeight: 700, fontSize: 11.5, borderBottom: '1.5px solid #D97706', paddingBottom: 1 }}>
                                 {car.currentRental.remainingDays} j restants
                               </span>
                               <span>· {car.currentRental.pickupLocation}</span>
@@ -751,26 +751,6 @@ export default function VehiclesFleetPage() {
                             </span>
                             <span style={{ color: '#64748B' }}>
                               Caution : {car.deposit.toLocaleString('fr-DZ')} DA · Prêt au départ
-                            </span>
-                          </div>
-                        )}
-
-                        {/* If this car has upcoming customers waiting */}
-                        {car.nextCustomers.length > 0 && (
-                          <div style={{ marginTop: 5, display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <span style={{
-                              fontSize: 10.5,
-                              color: '#1D4ED8',
-                              background: '#EFF6FF',
-                              border: '1px solid #BFDBFE',
-                              padding: '2px 8px',
-                              borderRadius: 6,
-                              fontWeight: 600,
-                            }}>
-                              {car.nextCustomers.length} client{car.nextCustomers.length > 1 ? 's' : ''} en attente prochaine
-                            </span>
-                            <span style={{ fontSize: 11, color: '#64748B' }}>
-                              Prochain : {car.nextCustomers[0].clientName} ({car.nextCustomers[0].pickupDate})
                             </span>
                           </div>
                         )}
@@ -871,40 +851,32 @@ export default function VehiclesFleetPage() {
                   }}
                 />
 
-                {/* Status pill on image */}
+                {/* Status on image without lines around it, just colorful text */}
                 <div style={{ position: 'absolute', top: 12, left: 12 }}>
                   {selectedCar.status === 'rented' ? (
                     <span style={{
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: 5,
-                      padding: '4px 10px',
-                      borderRadius: 99,
-                      fontSize: 11,
-                      fontWeight: 600,
-                      background: '#EFF6FF',
-                      color: '#1D4ED8',
-                      border: '1px solid #BFDBFE',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                      gap: 6,
+                      fontSize: 12,
+                      fontWeight: 800,
+                      color: '#2563EB',
+                      textShadow: '0 1px 3px rgba(255,255,255,0.95)',
                     }}>
-                      <span style={{ width: 5, height: 5, borderRadius: 99, background: '#2563EB' }} />
+                      <span style={{ width: 6, height: 6, borderRadius: 99, background: '#2563EB' }} />
                       En location
                     </span>
                   ) : (
                     <span style={{
                       display: 'inline-flex',
                       alignItems: 'center',
-                      gap: 5,
-                      padding: '4px 10px',
-                      borderRadius: 99,
-                      fontSize: 11,
-                      fontWeight: 600,
-                      background: '#ECFDF5',
-                      color: '#047857',
-                      border: '1px solid #A7F3D0',
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                      gap: 6,
+                      fontSize: 12,
+                      fontWeight: 800,
+                      color: '#059669',
+                      textShadow: '0 1px 3px rgba(255,255,255,0.95)',
                     }}>
-                      <span style={{ width: 5, height: 5, borderRadius: 99, background: '#10B981' }} />
+                      <span style={{ width: 6, height: 6, borderRadius: 99, background: '#10B981' }} />
                       Disponible au parc
                     </span>
                   )}
@@ -1013,7 +985,7 @@ export default function VehiclesFleetPage() {
                     <span style={{ fontSize: 11, fontWeight: 700, color: '#1D4ED8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                       Location en cours
                     </span>
-                    <span style={{ fontSize: 11, color: '#B45309', background: '#FEF3C7', border: '1px solid #FDE68A', padding: '1px 8px', borderRadius: 99, fontWeight: 600 }}>
+                    <span style={{ fontSize: 11.5, color: '#B45309', fontWeight: 700, borderBottom: '1.5px solid #B45309', paddingBottom: 1 }}>
                       {selectedCar.currentRental.remainingDays} jours restants
                     </span>
                   </div>
