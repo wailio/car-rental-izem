@@ -501,88 +501,52 @@ export default function AdminDashboard() {
 
   const todayReturnsCount = todayReturns > 0 ? todayReturns : 3
 
-  // ── 5 Derniers clients (linked with system / salesData / orders) ──
+  // ── 5 Derniers clients (Locations récentes personnalisées) ──
   const fallbackRecentClients = [
     {
       id: 'c-1',
-      number: '202511008',
+      cost: '132 000 DA',
       name: 'Karim Benali',
-      date: '17-10-2026',
-      phone: '0550 12 34 56',
+      dates: '18-10-2026 → 24-10-2026',
       vehicle: 'Audi A3 Sportback',
-      amount: 44000,
-      dates: '18 oct. → 24 oct.',
-      timeAgo: 'Il y a 3h',
-      status: 'active' as const,
-      statusLabel: 'En cours',
     },
     {
       id: 'c-2',
-      number: '202511007',
-      name: 'Yacine Mansouri',
-      date: '22-10-2026',
-      phone: '0661 88 92 14',
-      vehicle: 'Volkswagen T-Cross',
-      amount: 51000,
-      dates: '19 oct. → 23 oct.',
-      timeAgo: 'Hier',
-      status: 'active' as const,
-      statusLabel: 'En cours',
+      cost: '130 000 DA',
+      name: 'Dr. Amina Dahmani',
+      dates: '21-10-2026 → 26-10-2026',
+      vehicle: 'MG 7 Fastback',
     },
     {
       id: 'c-3',
-      number: '202508001',
-      name: 'Amine Zerrouk',
-      date: '01-08-2026',
-      phone: '0662 33 44 55',
-      vehicle: 'Geely Coolray Sport',
-      amount: 60000,
-      dates: '20 oct. → 27 oct.',
-      timeAgo: 'Il y a 2j',
-      status: 'active' as const,
-      statusLabel: 'En cours',
+      cost: '68 000 DA',
+      name: 'Yacine Mansouri',
+      dates: '19-10-2026 → 23-10-2026',
+      vehicle: 'Volkswagen T-Cross',
     },
     {
       id: 'c-4',
-      number: '202508002',
-      name: 'Sofiane Kaci',
-      date: '02-08-2026',
-      phone: '0560 11 22 33',
-      vehicle: 'Volkswagen T-Cross',
-      amount: 51000,
-      dates: '22 oct. → 26 oct.',
-      timeAgo: 'Il y a 3j',
-      status: 'confirmed' as const,
-      statusLabel: 'Confirmé',
+      cost: '105 000 DA',
+      name: 'Amine Zerrouk',
+      dates: '20-10-2026 → 27-10-2026',
+      vehicle: 'Geely Coolray Sport',
     },
     {
       id: 'c-5',
-      number: '202508003',
+      cost: '52 500 DA',
       name: 'Farid Khelifi',
-      date: '04-08-2026',
-      phone: '0770 45 67 89',
+      dates: '17-10-2026 → 22-10-2026',
       vehicle: 'MG 5 Berline',
-      amount: 31500,
-      dates: '17 oct. → 22 oct.',
-      timeAgo: 'Il y a 4j',
-      status: 'active' as const,
-      statusLabel: 'En cours',
     },
   ]
 
   const recentClients = salesData.length > 0
     ? salesData.slice(0, 5).map((s: any, idx: number) => ({
         id: s.id || `sale-${idx}`,
-        number: s.order_number || `20251100${8 - idx}`,
-        name: s.customer_name || 'Client',
-        date: s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-') : '17-10-2026',
-        phone: s.phone || '0550 00 00 00',
-        vehicle: s.product_id || 'Véhicule de flotte',
-        amount: Number(s.amount) || 45000,
-        dates: s.pickup_date && s.return_date ? `${s.pickup_date} → ${s.return_date}` : 'Réservation en cours',
-        timeAgo: s.created_at ? new Date(s.created_at).toLocaleDateString('fr-DZ', { day: 'numeric', month: 'short' }) : 'Récemment',
-        status: 'active' as const,
-        statusLabel: 'En cours',
+        cost: s.amount ? `${Number(s.amount).toLocaleString('fr-DZ')} DA` : fallbackRecentClients[idx % fallbackRecentClients.length].cost,
+        name: s.customer_name || fallbackRecentClients[idx % fallbackRecentClients.length].name,
+        dates: s.pickup_date && s.return_date ? `${s.pickup_date} → ${s.return_date}` : fallbackRecentClients[idx % fallbackRecentClients.length].dates,
+        vehicle: s.product_id || fallbackRecentClients[idx % fallbackRecentClients.length].vehicle,
       }))
     : fallbackRecentClients
 
@@ -1243,21 +1207,9 @@ export default function AdminDashboard() {
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
                         borderRight: '1px solid #E5E7EB',
-                        width: '22%',
+                        width: '18%',
                       }}>
-                        NUMÉRO
-                      </th>
-                      <th style={{
-                        padding: '12px 18px',
-                        fontSize: 12,
-                        fontWeight: 800,
-                        color: '#111827',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.04em',
-                        borderRight: '1px solid #E5E7EB',
-                        width: '28%',
-                      }}>
-                        CLIENT
+                        COÛT
                       </th>
                       <th style={{
                         padding: '12px 18px',
@@ -1269,6 +1221,18 @@ export default function AdminDashboard() {
                         borderRight: '1px solid #E5E7EB',
                         width: '24%',
                       }}>
+                        CLIENT
+                      </th>
+                      <th style={{
+                        padding: '12px 18px',
+                        fontSize: 12,
+                        fontWeight: 800,
+                        color: '#111827',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                        borderRight: '1px solid #E5E7EB',
+                        width: '35%',
+                      }}>
                         DATE
                       </th>
                       <th style={{
@@ -1278,7 +1242,7 @@ export default function AdminDashboard() {
                         color: '#111827',
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
-                        width: '26%',
+                        width: '23%',
                       }}>
                         VOITURE
                       </th>
@@ -1298,18 +1262,18 @@ export default function AdminDashboard() {
                           <td style={{
                             padding: '12px 18px',
                             color: '#0D9488',
-                            fontWeight: 600,
+                            fontWeight: 700,
                             fontSize: 13,
                             fontFamily: 'monospace',
                             borderRight: '1px solid #E5E7EB',
                             whiteSpace: 'nowrap',
                           }}>
-                            {client.number}
+                            {client.cost}
                           </td>
                           <td style={{
                             padding: '12px 18px',
                             color: '#111827',
-                            fontWeight: 500,
+                            fontWeight: 600,
                             fontSize: 13,
                             borderRight: '1px solid #E5E7EB',
                             whiteSpace: 'nowrap',
@@ -1321,10 +1285,11 @@ export default function AdminDashboard() {
                             color: '#111827',
                             fontWeight: 500,
                             fontSize: 13,
+                            fontFamily: 'monospace',
                             borderRight: '1px solid #E5E7EB',
                             whiteSpace: 'nowrap',
                           }}>
-                            {client.date}
+                            {client.dates}
                           </td>
                           <td style={{
                             padding: '12px 18px',
