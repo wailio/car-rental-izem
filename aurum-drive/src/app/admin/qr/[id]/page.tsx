@@ -20,6 +20,7 @@ import {
   User,
   Calendar,
   Wifi,
+  ShieldCheck,
 } from 'lucide-react'
 
 export default function AdminCarQrPage({
@@ -111,6 +112,12 @@ export default function AdminCarQrPage({
 
   const isRented = currentCar.status === 'rented' && !!currentCar.rental?.clientName
   const activeClientName = isRented ? currentCar.rental!.clientName : 'Disponible au parc'
+
+  // Scale calculation: Native iPhone 15 outer chassis is 414x868 (390x844 screen + 12px bezel).
+  // Scaled by 0.603, it renders at exactly ~250px x 524px on desktop.
+  const PHONE_SCALE = 0.603
+  const PHONE_DISPLAY_WIDTH = Math.round(414 * PHONE_SCALE) // 250px
+  const PHONE_DISPLAY_HEIGHT = Math.round(868 * PHONE_SCALE) // 523px
 
   return (
     <div className="max-w-[1400px] mx-auto px-2 sm:px-6 py-2 space-y-4">
@@ -400,9 +407,9 @@ export default function AdminCarQrPage({
           </div>
         </div>
 
-        {/* ── RIGHT COLUMN: ULTRA-SMOOTH STUDIO IPHONE SHOWCASE ────────── */}
+        {/* ── RIGHT COLUMN: PURE CSS IPHONE (390x844 VIEWPORT, CONCENTRIC 55/43 CORNERS, SCALED VIA TRANSFORM) ── */}
         <div className="lg:col-span-4 flex flex-col items-center lg:items-start justify-start">
-          <div className="w-full max-w-[250px] space-y-2">
+          <div className="w-full max-w-[260px] space-y-2">
             {/* Top clean header */}
             <div className="flex items-center justify-between px-1">
               <span className="text-[10.5px] font-extrabold uppercase tracking-wider text-slate-500">
@@ -418,118 +425,373 @@ export default function AdminCarQrPage({
               </a>
             </div>
 
-            {/* ── STUDIO IPHONE CONTAINER WITH SOFT AMBIENT GLOW ──────── */}
+            {/* ── PURE CSS IPHONE CONTAINER (SCALED TO FIT WITHOUT CONTENT SHRINKING) ── */}
             <div
-              className="relative mx-auto w-full aspect-[216/425] max-h-[500px] select-none"
+              className="relative mx-auto select-none"
               style={{
-                filter: 'drop-shadow(0 25px 45px rgba(0,0,0,0.32)) drop-shadow(0 8px 16px rgba(11,117,132,0.18))',
+                width: PHONE_DISPLAY_WIDTH,
+                height: PHONE_DISPLAY_HEIGHT,
               }}
             >
-              {/* 1. Behind the frame: Live Screen precisely mapped to frame bezels */}
+              {/* Full-resolution Phone Chassis (414px x 868px) scaled via CSS transform */}
               <div
-                className="absolute overflow-hidden bg-slate-950 flex flex-col justify-between text-white z-10"
                 style={{
-                  left: '2.78%',
-                  right: '2.78%',
-                  top: '3.76%',
-                  bottom: '3.76%',
-                  borderRadius: '35px',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: 414,
+                  height: 868,
+                  transform: `scale(${PHONE_SCALE})`,
+                  transformOrigin: 'top left',
+                  WebkitBackfaceVisibility: 'hidden',
+                  backfaceVisibility: 'hidden',
+                  /* 1. Outer Chassis: radius 55px, bezel 12px, subtle 1px inner border, soft top highlight */
+                  borderRadius: 55,
+                  padding: 12,
+                  background: '#16191E',
+                  boxShadow: `
+                    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+                    0 1px 0 0 rgba(255, 255, 255, 0.25) inset,
+                    0 24px 48px -12px rgba(0, 0, 0, 0.32),
+                    0 8px 16px -4px rgba(0, 0, 0, 0.15)
+                  `,
                 }}
               >
-                {/* Background Car Image with iOS Blur extending edge-to-edge */}
-                <img
-                  src={currentCar.image}
-                  alt={currentCar.name}
-                  className="absolute inset-0 w-full h-full object-cover object-center filter blur-[4px] brightness-[0.32] scale-110 pointer-events-none"
-                />
+                {/* ── PHYSICAL HARDWARE BUTTONS (PURE CSS) ── */}
+                {/* Left Side: Action Button */}
                 <div
-                  className="absolute inset-0 pointer-events-none"
                   style={{
-                    background:
-                      'radial-gradient(ellipse at 50% 30%, rgba(15,23,42,0.05) 0%, rgba(15,23,42,0.65) 75%, rgba(10,15,30,0.92) 100%)',
+                    position: 'absolute',
+                    left: -3.5,
+                    top: 115,
+                    width: 3.5,
+                    height: 28,
+                    background: '#2B2F38',
+                    borderTopLeftRadius: 3,
+                    borderBottomLeftRadius: 3,
+                  }}
+                />
+                {/* Left Side: Volume Up */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: -3.5,
+                    top: 158,
+                    width: 3.5,
+                    height: 52,
+                    background: '#2B2F38',
+                    borderTopLeftRadius: 3,
+                    borderBottomLeftRadius: 3,
+                  }}
+                />
+                {/* Left Side: Volume Down */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: -3.5,
+                    top: 222,
+                    width: 3.5,
+                    height: 52,
+                    background: '#2B2F38',
+                    borderTopLeftRadius: 3,
+                    borderBottomLeftRadius: 3,
+                  }}
+                />
+                {/* Right Side: Power Button */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: -3.5,
+                    top: 175,
+                    width: 3.5,
+                    height: 75,
+                    background: '#2B2F38',
+                    borderTopRightRadius: 3,
+                    borderBottomRightRadius: 3,
                   }}
                 />
 
-                {/* ── REALISTIC IOS STATUS BAR (FLANKING THE DYNAMIC ISLAND) ── */}
-                <div className="relative z-20 pt-2.5 px-3.5 flex items-center justify-between text-white">
-                  {/* Left: Clock Time */}
-                  <span className="text-[10px] font-semibold tracking-tight text-white/95 pl-1">
-                    16:26
-                  </span>
+                {/* ── 2. SCREEN CONTAINER: REAL 390x844 VIEWPORT, RADIUS 43px, ISOLATION ISOLATE ── */}
+                <div
+                  style={{
+                    position: 'relative',
+                    width: 390,
+                    height: 844,
+                    borderRadius: 43,
+                    overflow: 'hidden',
+                    isolation: 'isolate',
+                    background: '#0B0F17',
+                    boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.08) inset',
+                  }}
+                >
+                  {/* Background Car Image: pre-darkened with overlay gradient (NO heavy blur filter) */}
+                  <img
+                    src={currentCar.image}
+                    alt=""
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                      opacity: 0.38,
+                      pointerEvents: 'none',
+                    }}
+                  />
 
-                  {/* Right: Cellular, Wifi, Battery icons */}
-                  <div className="flex items-center gap-1.5 pr-1 text-white/90">
-                    {/* Cellular signal bars */}
-                    <div className="flex items-end gap-0.5 h-2.5">
-                      <span className="w-0.5 h-1 bg-white rounded-full" />
-                      <span className="w-0.5 h-1.5 bg-white rounded-full" />
-                      <span className="w-0.5 h-2 bg-white rounded-full" />
-                      <span className="w-0.5 h-2.5 bg-white rounded-full" />
-                    </div>
-                    {/* Wifi */}
-                    <Wifi className="w-2.5 h-2.5 text-white stroke-[2.5]" />
-                    {/* Battery indicator */}
-                    <div className="w-4 h-2 rounded-[3px] border border-white/80 p-0.2 flex items-center">
-                      <div className="w-2.5 h-1.2 bg-white rounded-[1.5px]" />
-                    </div>
+                  {/* Dark luxury radial/linear gradient overlay matching admin theme */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: 'radial-gradient(ellipse 95% 65% at 50% 30%, rgba(15, 23, 42, 0.45) 0%, rgba(10, 15, 25, 0.88) 72%, #070A0F 100%)',
+                      pointerEvents: 'none',
+                    }}
+                  />
+
+                  {/* ── 3. AUTHENTIC DYNAMIC ISLAND (CENTERED PILL) ── */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 11,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: 124,
+                      height: 35,
+                      borderRadius: 20,
+                      background: '#000000',
+                      zIndex: 50,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'flex-end',
+                      paddingRight: 10,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                    }}
+                  >
+                    {/* Camera lens reflection */}
+                    <div
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: '50%',
+                        background: '#0D111A',
+                        border: '1px solid #1A2232',
+                      }}
+                    />
                   </div>
-                </div>
 
-                {/* ── APP HEADER (POSITIONED COMFORTABLY BELOW DYNAMIC ISLAND) ── */}
-                <div className="relative z-10 pt-5 px-3.5 flex items-center justify-between text-white/80">
-                  <span className="text-[8.5px] uppercase tracking-[0.18em] font-light text-white/70">
-                    DZ RENT CAR
-                  </span>
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[8px] font-bold border backdrop-blur-md ${
-                      isRented
-                        ? 'bg-emerald-500/25 text-emerald-300 border-emerald-400/40 shadow-xs'
-                        : 'bg-white/10 text-white/80 border-white/20'
-                    }`}
+                  {/* ── 4. STATUS BAR TOP ROW (FLANKING THE ISLAND) ── */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 54,
+                      padding: '0 26px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      zIndex: 40,
+                      color: '#FFFFFF',
+                    }}
                   >
-                    {isRented ? 'En circulation' : 'Libre'}
-                  </span>
-                </div>
-
-                {/* ── HERO / CLIENT NAME: CENTERED LIKE IN REFERENCE DESIGN ── */}
-                <div className="relative z-10 my-auto px-4 py-1 text-left">
-                  <span className="text-[9px] uppercase tracking-[0.22em] text-white/60 font-light block mb-1">
-                    Conducteur Enregistré
-                  </span>
-                  <h3
-                    className="text-[21px] font-black text-white tracking-tight leading-tight m-0 truncate"
-                    style={{ textShadow: '0 4px 18px rgba(0,0,0,0.8)' }}
-                  >
-                    {activeClientName}
-                  </h3>
-
-                  {/* Car information glass badge */}
-                  <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15">
-                    <span className="font-light text-white/90 text-[11px] truncate">{currentCar.name}</span>
-                    <span className="text-white/30">·</span>
-                    <span className="font-mono font-bold text-[9.5px] text-white">
-                      {currentCar.plate}
+                    {/* Time on left */}
+                    <span
+                      style={{
+                        fontSize: 15,
+                        fontWeight: 600,
+                        letterSpacing: '-0.02em',
+                        color: 'rgba(255, 255, 255, 0.95)',
+                        fontFamily: 'var(--font-heading)',
+                      }}
+                    >
+                      16:26
                     </span>
-                  </div>
-                </div>
 
-                {/* ── BOTTOM APP FOOTER & IOS HOME INDICATOR ── */}
-                <div className="relative z-10 pb-2 px-3.5 text-center">
-                  <div className="flex items-center justify-between text-[8px] text-white/45 mb-1.5">
-                    <span>Voiture #{currentCar.id}</span>
-                    <span>Session active</span>
+                    {/* Icons on right */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      {/* Cellular 4 bars */}
+                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 1.5, height: 12 }}>
+                        <span style={{ width: 3, height: 4, background: '#FFFFFF', borderRadius: 1 }} />
+                        <span style={{ width: 3, height: 6, background: '#FFFFFF', borderRadius: 1 }} />
+                        <span style={{ width: 3, height: 9, background: '#FFFFFF', borderRadius: 1 }} />
+                        <span style={{ width: 3, height: 12, background: '#FFFFFF', borderRadius: 1 }} />
+                      </div>
+                      {/* Wifi */}
+                      <Wifi style={{ width: 15, height: 15, color: '#FFFFFF', strokeWidth: 2.2 }} />
+                      {/* Battery indicator outline + fill */}
+                      <div
+                        style={{
+                          width: 24,
+                          height: 12,
+                          borderRadius: 3.5,
+                          border: '1.2px solid rgba(255,255,255,0.85)',
+                          padding: 1.5,
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div style={{ width: 14, height: 7, background: '#FFFFFF', borderRadius: 1.5 }} />
+                      </div>
+                    </div>
                   </div>
-                  {/* iOS Home Indicator Bar */}
-                  <div className="w-24 h-1 bg-white/45 rounded-full mx-auto" />
+
+                  {/* ── 5. SCREEN CONTENT: 20px HORIZONTAL PADDING, 62px TOP PADDING, 34px BOTTOM PADDING ── */}
+                  <div
+                    style={{
+                      position: 'relative',
+                      zIndex: 20,
+                      width: '100%',
+                      height: '100%',
+                      paddingTop: 62,
+                      paddingBottom: 34,
+                      paddingLeft: 22,
+                      paddingRight: 22,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                      fontFamily: 'var(--font-heading)',
+                    }}
+                  >
+                    {/* App Header below Dynamic Island */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 300,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.22em',
+                          color: 'rgba(255, 255, 255, 0.72)',
+                        }}
+                      >
+                        DZ RENT CAR
+                      </span>
+
+                      <span
+                        style={{
+                          padding: '3px 10px',
+                          borderRadius: 99,
+                          fontSize: 10.5,
+                          fontWeight: 700,
+                          background: isRented ? 'rgba(16, 185, 129, 0.22)' : 'rgba(255, 255, 255, 0.12)',
+                          color: isRented ? '#6EE7B7' : 'rgba(255, 255, 255, 0.85)',
+                          border: isRented ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(255, 255, 255, 0.2)',
+                          backdropFilter: 'blur(8px)',
+                        }}
+                      >
+                        {isRented ? 'En circulation' : 'Libre au parc'}
+                      </span>
+                    </div>
+
+                    {/* Middle Hero: Client Name & Car Information */}
+                    <div style={{ padding: '0 4px', margin: 'auto 0' }}>
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 300,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.24em',
+                          color: 'rgba(255, 255, 255, 0.65)',
+                          display: 'block',
+                          marginBottom: 8,
+                        }}
+                      >
+                        Conducteur Enregistré
+                      </span>
+
+                      <h3
+                        style={{
+                          fontSize: 29,
+                          fontWeight: 800,
+                          color: '#FFFFFF',
+                          letterSpacing: '-0.025em',
+                          lineHeight: 1.15,
+                          margin: 0,
+                          textShadow: '0 4px 18px rgba(0, 0, 0, 0.85)',
+                        }}
+                      >
+                        {activeClientName}
+                      </h3>
+
+                      {/* Car Details Badge */}
+                      <div
+                        style={{
+                          marginTop: 14,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 8,
+                          padding: '6px 14px',
+                          borderRadius: 99,
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(12px)',
+                          border: '1px solid rgba(255, 255, 255, 0.16)',
+                        }}
+                      >
+                        <span style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255, 255, 255, 0.95)' }}>
+                          {currentCar.name}
+                        </span>
+                        <span style={{ color: 'rgba(255, 255, 255, 0.3)' }}>·</span>
+                        <span
+                          style={{
+                            fontFamily: 'monospace',
+                            fontSize: 11.5,
+                            fontWeight: 800,
+                            color: '#FFFFFF',
+                          }}
+                        >
+                          {currentCar.plate}
+                        </span>
+                      </div>
+
+                      {/* Small verified assurance note */}
+                      <div
+                        style={{
+                          marginTop: 22,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          fontSize: 11,
+                          color: 'rgba(255, 255, 255, 0.5)',
+                        }}
+                      >
+                        <ShieldCheck style={{ width: 14, height: 14, color: '#34D399', flexShrink: 0 }} />
+                        <span>Session active vérifiée · Flotte DZ Rent Car</span>
+                      </div>
+                    </div>
+
+                    {/* Bottom: Signature & iOS Home Indicator Bar */}
+                    <div style={{ textAlign: 'center' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          fontSize: 10.5,
+                          color: 'rgba(255, 255, 255, 0.4)',
+                          padding: '0 4px',
+                          marginBottom: 10,
+                        }}
+                      >
+                        <span>Voiture #{currentCar.id} de la flotte</span>
+                        <span>DZ RENT CAR © 2026</span>
+                      </div>
+
+                      {/* Authentic iOS Home Indicator Bar */}
+                      <div
+                        style={{
+                          width: 134,
+                          height: 5,
+                          borderRadius: 99,
+                          background: 'rgba(255, 255, 255, 0.65)',
+                          margin: '0 auto',
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* 2. In front of screen: User-Provided iPhone Frame PNG overlay */}
-              <img
-                src="/images/iphone-frame.png"
-                alt="iPhone Mockup"
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none z-30 select-none"
-              />
             </div>
           </div>
         </div>
