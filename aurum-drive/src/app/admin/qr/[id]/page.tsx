@@ -121,23 +121,42 @@ export default function AdminCarQrPage({
   const PHONE_DISPLAY_HEIGHT = Math.round(868 * PHONE_SCALE) // 523px
 
   return (
-    <div className="max-w-[1400px] mx-auto px-2 sm:px-6 py-2 space-y-4">
-      {/* ── TOP HEADER (CLEAN, NO BREADCRUMB) ─────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-200/80 pb-3">
+    <div style={{ minHeight: '100%', background: '#F5F5F7' }}>
+      {/* ── Page header: Apple frosted header ─────────────────────────────────── */}
+      <div style={{
+        background: 'rgba(245, 245, 247, 0.85)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+        padding: '14px clamp(16px,3vw,28px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 12,
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
+      }}>
+        {/* Title with Thin + Bold signature */}
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5 m-0">
-            <span className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-xs">
-              <QrIcon className="w-4.5 h-4.5" />
-            </span>
-            QR Codes Statiques Flotte
+          <h1 style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: 18,
+            fontWeight: 400,
+            color: '#0F172A',
+            margin: 0,
+            letterSpacing: '-0.01em',
+          }}>
+            QR Codes Flotte <span style={{ fontWeight: 800 }}>• Écrans Véhicules</span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            QR code permanent pour chaque voiture. L&apos;interface smartphone s&apos;adapte automatiquement en direct.
+          <p className="tnum" style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
+            QR code permanent pour chaque voiture · L&apos;interface smartphone s&apos;adapte automatiquement en direct
           </p>
         </div>
 
         {/* Quick action: Open Client View */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <a
             href={targetUrl}
             target="_blank"
@@ -150,8 +169,10 @@ export default function AdminCarQrPage({
         </div>
       </div>
 
-      {/* ── 2-COLUMN MAIN VIEW: CLOSER GAP & ELEVATED PHONE ───────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 xl:gap-6 items-start">
+      {/* ── MAIN CONTENT AREA ────────────────────────────────────────────── */}
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: 'clamp(16px, 2.5vw, 24px) clamp(16px, 3vw, 28px)' }}>
+        {/* ── 2-COLUMN MAIN VIEW: CLOSER GAP & ELEVATED PHONE ───────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 xl:gap-6 items-start">
         {/* LEFT COLUMN: QR CODE CARD & ACTIONS (8 cols) */}
         <div className="lg:col-span-8 space-y-4">
           <div className="bg-white rounded-3xl border border-slate-200/90 p-5 sm:p-7 shadow-xs space-y-5">
@@ -536,6 +557,7 @@ export default function AdminCarQrPage({
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

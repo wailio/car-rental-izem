@@ -473,7 +473,7 @@ export default function CalendarPage() {
   }, [currentYear, currentMonth, daysInCurrentMonth])
 
   return (
-    <div style={{ maxWidth: 1180, margin: '0 auto', paddingBottom: 60 }}>
+    <div style={{ minHeight: '100%', background: '#F5F5F7' }}>
       {/* ── STYLES ────────────────────────────────────────────────────────── */}
       <style jsx global>{`
         .cal-tab-btn {
@@ -518,29 +518,38 @@ export default function CalendarPage() {
             rgba(255, 255, 255, 0.7) 12px
           );
         }
+        .tnum { font-variant-numeric: tabular-nums; }
       `}</style>
 
-      {/* ── TOP BAR: TITLE + VIEW MODE TOGGLE ──────────────────────────────── */}
+      {/* ── Page header: Apple frosted header ─────────────────────────────────── */}
       <div style={{
+        background: 'rgba(245, 245, 247, 0.85)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+        padding: '14px clamp(16px,3vw,28px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: 16,
-        marginBottom: 20,
+        gap: 12,
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
       }}>
+        {/* Title with Thin + Bold signature */}
         <div>
           <h1 style={{
-            fontSize: 22,
-            fontWeight: 800,
+            fontFamily: 'var(--font-heading)',
+            fontSize: 18,
+            fontWeight: 400,
             color: '#0F172A',
             margin: 0,
-            fontFamily: 'var(--font-heading)',
-            letterSpacing: '-0.02em',
+            letterSpacing: '-0.01em',
           }}>
-            Calendrier & Disponibilité
+            Calendrier <span style={{ fontWeight: 800 }}>• Disponibilité Flotte</span>
           </h1>
-          <p style={{ fontSize: 13, color: '#64748B', margin: '3px 0 0 0' }}>
+          <p className="tnum" style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
             Consultez les disponibilités par véhicule et les clients réservés de N° 0 à N°.
           </p>
         </div>
@@ -567,6 +576,9 @@ export default function CalendarPage() {
           </button>
         </div>
       </div>
+
+      {/* ── MAIN CONTENT AREA ────────────────────────────────────────────── */}
+      <div style={{ maxWidth: 1220, margin: '0 auto', padding: 'clamp(16px, 2.5vw, 24px) clamp(16px, 3vw, 28px)', paddingBottom: 60 }}>
 
       {/* ── VIEW 1: VUE VÉHICULE DÉDIÉ (DEFAULT VIEW) ─────────────────────── */}
       {viewMode === 'dedicated' && (
@@ -1514,6 +1526,7 @@ export default function CalendarPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   )
 }
