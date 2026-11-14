@@ -23,6 +23,9 @@ import {
   Sparkles,
   ShieldCheck,
   Check,
+  Users,
+  TrendingUp,
+  RotateCcw,
 } from 'lucide-react'
 
 // ── Accent tokens from realfurniture ──────────────────────────────────────────
@@ -228,6 +231,37 @@ const INITIAL_HANDOVERS: PendingHandover[] = [
   },
 ]
 
+// ── Sparkline SVG Component ───────────────────────────────────────────────────
+function Sparkline({ data, color = '#0B7584', width = 120, height = 40 }: {
+  data: number[], color?: string, width?: number, height?: number
+}) {
+  if (!data || data.length < 2) return null
+  const max = Math.max(...data, 1)
+  const min = Math.min(...data, 0)
+  const range = max - min || 1
+  const pts = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * (width - 4) + 2
+    const y = height - 2 - ((v - min) / range) * (height - 4)
+    return `${x},${y}`
+  })
+  const lastPt = pts[pts.length - 1].split(',').map(Number)
+  const lx = lastPt[0]
+  const ly = lastPt[1]
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ display: 'block', overflow: 'visible' }}>
+      <polyline
+        points={pts.join(' ')}
+        fill="none"
+        stroke={color}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx={lx} cy={ly} r={3} fill={color} />
+    </svg>
+  )
+}
+
 export default function AdminDashboard() {
   const [time, setTime] = useState(new Date())
   const [refreshing, setRefreshing] = useState(false)
@@ -243,6 +277,17 @@ export default function AdminDashboard() {
     pendingReservations: 3,
     loading: true,
   })
+
+  const [revenueTimeline, setRevenueTimeline] = useState<'semaine' | 'mensuelle' | 'annuelle'>('mensuelle')
+  const [salesData, setSalesData] = useState<any[]>([])
+  const [salesLoading, setSalesLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/admin/sales?t=' + Date.now(), { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : [])
+      .then(data => { setSalesData(Array.isArray(data) ? data : []); setSalesLoading(false) })
+      .catch(() => setSalesLoading(false))
+  }, [])
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 60000)
@@ -329,6 +374,86 @@ export default function AdminDashboard() {
     await loadStats(false)
     setTimeout(() => setRefreshing(false), 600)
   }
+
+  // ── Revenue computations ────────────────────────────────────────────────────
+  const now = new Date()
+  const todayAlgiersStr = now.toLocaleDateString('en-CA', { timeZone: 'Africa/Algiers' })
+
+  function getTimelineBounds(tl: 'semaine' | 'mensuelle' | 'annuelle') {
+    const d = new Date()
+    if (tl === 'semaine') {
+      const start = new Date(d); start.setDate(d.getDate() - 6); start.setHours(0, 0, 0, 0)
+      const prev = new Date(start); prev.setDate(prev.getDate() - 7)
+      return { start, end: d, prevStart: prev, prevEnd: new Date(start) }
+    }
+    if (tl === 'mensuelle') {
+      const start = new Date(d.getFullYear(), d.getMonth(), 1)
+      const prevStart = new Date(d.getFullYear(), d.getMonth() - 1, 1)
+      const prevEnd = new Date(d.getFullYear(), d.getMonth(), 0)
+      return { start, end: d, prevStart, prevEnd }
+    }
+    // annuelle
+    const start = new Date(d.getFullYear(), 0, 1)
+    const prevStart = new Date(d.getFullYear() - 1, 0, 1)
+    const prevEnd = new Date(d.getFullYear() - 1, 11, 31)
+    return { start, end: d, prevStart, prevEnd }
+  }
+
+  const { start: tlStart, end: tlEnd, prevStart, prevEnd } = getTimelineBounds(revenueTimeline)
+
+  const filteredSales = salesData.filter(s => {
+    const d = new Date(s.created_at)
+    return d >= tlStart && d <= tlEnd
+  })
+  const prevSales = salesData.filter(s => {
+    const d = new Date(s.created_at)
+    return d >= prevStart && d <= prevEnd
+  })
+
+  const totalRevenue = filteredSales.reduce((sum: number, s: any) => sum + (Number(s.amount) || 0), 0)
+  const prevRevenue = prevSales.reduce((sum: number, s: any) => sum + (Number(s.amount) || 0), 0)
+  const revenueTrend = prevRevenue > 0
+    ? Math.round(((totalRevenue - prevRevenue) / prevRevenue) * 100)
+    : totalRevenue > 0 ? 100 : 0
+
+  // Sparkline data
+  function buildSparklineData(tl: 'semaine' | 'mensuelle' | 'annuelle'): number[] {
+    if (tl === 'semaine') {
+      return Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(); d.setDate(d.getDate() - (6 - i)); d.setHours(0, 0, 0, 0)
+        const dEnd = new Date(d); dEnd.setHours(23, 59, 59, 999)
+        return salesData.filter(s => { const sd = new Date(s.created_at); return sd >= d && sd <= dEnd })
+          .reduce((sum: number, s: any) => sum + (Number(s.amount) || 0), 0)
+      })
+    }
+    if (tl === 'mensuelle') {
+      return Array.from({ length: 4 }, (_, i) => {
+        const weekEnd = new Date(); weekEnd.setDate(weekEnd.getDate() - i * 7); weekEnd.setHours(23, 59, 59, 999)
+        const weekStart = new Date(weekEnd); weekStart.setDate(weekEnd.getDate() - 6); weekStart.setHours(0, 0, 0, 0)
+        return salesData.filter(s => { const sd = new Date(s.created_at); return sd >= weekStart && sd <= weekEnd })
+          .reduce((sum: number, s: any) => sum + (Number(s.amount) || 0), 0)
+      }).reverse()
+    }
+    // annuelle
+    return Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(); const yr = d.getFullYear()
+      const mStart = new Date(yr, i, 1); const mEnd = new Date(yr, i + 1, 0, 23, 59, 59)
+      return salesData.filter(s => { const sd = new Date(s.created_at); return sd >= mStart && sd <= mEnd })
+        .reduce((sum: number, s: any) => sum + (Number(s.amount) || 0), 0)
+    })
+  }
+
+  const sparklineData = buildSparklineData(revenueTimeline)
+
+  // ── Retour aujourd'hui ────────────────────────────────────────────────────
+  const todayReturns = INITIAL_FLEET_STATUS.filter(car => {
+    if (!car.client?.returnDate) return false
+    // returnDate is like "24 oct. 2026" — compare with today in Algiers locale
+    const rd = car.client.returnDate
+    const todayFr = now.toLocaleDateString('fr-DZ', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Africa/Algiers' })
+    // Normalize both: trim, lowercase
+    return rd.toLowerCase().replace(/\./g, '').trim() === todayFr.toLowerCase().replace(/\./g, '').trim()
+  }).length
 
   // Filtered fleet list
   const filteredFleet = INITIAL_FLEET_STATUS.filter(car => {
@@ -491,36 +616,103 @@ export default function AdminDashboard() {
 
             {/* ── PRIMARY METRICS CARD ───────────────────────────────────────── */}
             <div data-pop="left" className="admin-card" style={{ borderRadius: 18, padding: '20px 22px' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                <div>
+
+              {/* TOP SECTION — 3 columns */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 1 }}>
+
+                {/* Col 1 — Revenus */}
+                <div style={{ paddingRight: 18, borderRight: '1px solid #F1F5F9' }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+                    Revenus
+                  </p>
+                  {/* Timeline toggle */}
+                  <div className="adm-tab-bar" style={{ marginBottom: 8 }}>
+                    {(['semaine', 'mensuelle', 'annuelle'] as const).map(tl => (
+                      <button
+                        key={tl}
+                        onClick={() => setRevenueTimeline(tl)}
+                        className={`adm-tab${revenueTimeline === tl ? ' adm-tab-active' : ''}`}
+                        style={{ padding: '3px 8px', fontSize: 10 }}
+                      >
+                        {tl === 'semaine' ? 'Sem.' : tl === 'mensuelle' ? 'Mois' : 'An'}
+                      </button>
+                    ))}
+                  </div>
+                  <Link href="/admin/revenus" style={{ textDecoration: 'none' }}>
+                    <p className="tnum" style={{
+                      fontSize: 'clamp(26px,4vw,38px)',
+                      fontWeight: 800,
+                      color: '#0F172A',
+                      letterSpacing: '-0.03em',
+                      lineHeight: 1,
+                      fontFamily: 'var(--font-heading)',
+                    }}>
+                      {salesLoading ? '—' : N(totalRevenue)} <span style={{ fontSize: 14, fontWeight: 500, color: '#64748B' }}>DA</span>
+                    </p>
+                  </Link>
+                  <p style={{ fontSize: 11, color: revenueTrend >= 0 ? '#059669' : '#DC2626', marginTop: 4, fontWeight: 600 }}>
+                    {salesLoading ? '...' : `${revenueTrend >= 0 ? '+' : ''}${revenueTrend}% vs période précédente`}
+                  </p>
+                  <div style={{ marginTop: 8 }}>
+                    <Sparkline data={sparklineData} color="#0B7584" width={110} height={36} />
+                  </div>
+                </div>
+
+                {/* Col 2 — Retour d'aujourd'hui */}
+                <div style={{ padding: '0 16px', borderRight: '1px solid #F1F5F9' }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+                    Retour d&apos;aujourd&apos;hui
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <p className="tnum" style={{
+                      fontSize: 'clamp(26px,4vw,38px)',
+                      fontWeight: 800,
+                      color: '#0F172A',
+                      letterSpacing: '-0.03em',
+                      lineHeight: 1,
+                      fontFamily: 'var(--font-heading)',
+                    }}>
+                      {todayReturns}
+                    </p>
+                    <div style={{ background: '#F1F5F9', borderRadius: 8, padding: 6 }}>
+                      <RotateCcw style={{ width: 14, height: 14, color: '#64748B' }} />
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 11.5, color: '#64748B', marginTop: 6 }}>
+                    {todayReturns === 0
+                      ? 'Aucun retour prévu'
+                      : `${todayReturns} véhicule${todayReturns > 1 ? 's' : ''} attendu${todayReturns > 1 ? 's' : ''} au parc`}
+                  </p>
+                </div>
+
+                {/* Col 3 — Visiteurs */}
+                <div style={{ paddingLeft: 16 }}>
                   <p style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
                     Visiteurs aujourd&apos;hui
                   </p>
-                  <p className="tnum" style={{
-                    fontSize: 'clamp(36px,6vw,50px)',
-                    fontWeight: 800,
-                    color: '#0F172A',
-                    letterSpacing: '-0.03em',
-                    lineHeight: 1,
-                    fontFamily: 'var(--font-heading)',
-                  }}>
-                    {counts.loading ? '—' : N(counts.visitors)}
-                  </p>
-                  <p style={{ fontSize: 12, color: '#64748B', marginTop: 6 }}>
-                    Visiteurs uniques réels · filtre admin actif
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <p className="tnum" style={{
+                      fontSize: 'clamp(26px,4vw,38px)',
+                      fontWeight: 800,
+                      color: '#0F172A',
+                      letterSpacing: '-0.03em',
+                      lineHeight: 1,
+                      fontFamily: 'var(--font-heading)',
+                    }}>
+                      {counts.loading ? '—' : N(counts.visitors)}
+                    </p>
+                    <div style={{ background: '#F1F5F9', borderRadius: 8, padding: 6 }}>
+                      <Globe style={{ width: 14, height: 14, color: '#64748B' }} />
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 11.5, color: '#64748B', marginTop: 6 }}>
+                    Visiteurs uniques réels
                   </p>
                 </div>
-                <Link href="/admin/orders" style={{
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  fontSize: 12, color: '#64748B', fontWeight: 600,
-                  textDecoration: 'none', flexShrink: 0, marginTop: 2,
-                  transition: 'color 0.15s',
-                }}>
-                  Réservations <ArrowUpRight style={{ width: 13, height: 13 }} />
-                </Link>
+
               </div>
 
-              {/* 3 Secondary metrics in a tight row */}
+              {/* BOTTOM SECTION — 3 metrics with icons */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(3, 1fr)',
@@ -535,21 +727,27 @@ export default function AdminDashboard() {
                     value: counts.pendingReservations,
                     note: `${counts.pendingReservations} en attente`,
                     href: '/admin/orders',
+                    icon: <Users style={{ width: 13, height: 13, color: '#64748B' }} />,
                   },
                   {
                     label: 'Véhicules loués',
                     value: counts.rentedVehicles,
-                    note: `${Math.round((counts.rentedVehicles / counts.totalVehicles) * 100)}% du parc en circulation`,
+                    note: `${counts.totalVehicles > 0 ? Math.round((counts.rentedVehicles / counts.totalVehicles) * 100) : 0}% en circulation`,
                     href: '/admin/sales',
+                    icon: <Car style={{ width: 13, height: 13, color: '#64748B' }} />,
                   },
                   {
                     label: 'Flotte disponible',
                     value: counts.availableVehicles,
                     note: `${counts.totalVehicles} véhicules récents`,
                     href: '/admin/products',
+                    icon: <CheckCircle2 style={{ width: 13, height: 13, color: '#64748B' }} />,
                   },
                 ].map((m, i) => (
                   <Link key={i} href={m.href} style={{ textDecoration: 'none', padding: '0 12px', borderRight: i < 2 ? '1px solid #F1F5F9' : 'none' }}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#F1F5F9', borderRadius: 7, padding: 5, marginBottom: 4 }}>
+                      {m.icon}
+                    </div>
                     <p className="tnum" style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em', fontFamily: 'var(--font-heading)' }}>
                       {counts.loading ? '—' : N(m.value)}
                     </p>
