@@ -6,7 +6,13 @@ import { BRAND } from '@/lib/config';
 
 export function WhatsAppButton() {
   const pathname = usePathname();
-  if (pathname?.startsWith('/admin')) return null;
+  if (
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/car/') ||
+    pathname?.startsWith('/c/')
+  ) {
+    return null;
+  }
 
   // Algerian formatted phone number: 213555333316 (0555 33 33 16)
   const phoneNumber = BRAND.whatsapp; // "213555333316"

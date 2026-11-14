@@ -48,7 +48,11 @@ export function Footer() {
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSent, setNewsletterSent] = useState(false);
 
-  if (pathname?.startsWith("/admin")) {
+  if (
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/car/") ||
+    pathname?.startsWith("/c/")
+  ) {
     return null;
   }
 

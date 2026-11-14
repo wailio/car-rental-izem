@@ -9,6 +9,14 @@ import { Header } from "./Header";
  */
 export function HomeAwareHeader() {
   const pathname = usePathname();
-  if (pathname === "/" || pathname === "/contact" || pathname?.startsWith("/admin")) return null;
+  if (
+    pathname === "/" ||
+    pathname === "/contact" ||
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/car/") ||
+    pathname?.startsWith("/c/")
+  ) {
+    return null;
+  }
   return <Header />;
 }

@@ -8,6 +8,7 @@ import {
   INITIAL_LIVE_FLEET,
   LiveRentalVehicle,
 } from '@/lib/fleet-state'
+import { CustomerAppView } from '@/components/client/CustomerAppView'
 import {
   QrCode as QrIcon,
   ExternalLink,
@@ -520,36 +521,12 @@ export default function AdminCarQrPage({
                     borderRadius: 43,
                     overflow: 'hidden',
                     isolation: 'isolate',
-                    background: '#0B0F17',
+                    background: '#F7F5F0',
                     boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.08) inset',
+                    display: 'flex',
+                    flexDirection: 'column',
                   }}
                 >
-                  {/* Background Car Image: pre-darkened with overlay gradient (NO heavy blur filter) */}
-                  <img
-                    src={currentCar.image}
-                    alt=""
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      objectPosition: 'center',
-                      opacity: 0.38,
-                      pointerEvents: 'none',
-                    }}
-                  />
-
-                  {/* Dark luxury radial/linear gradient overlay matching admin theme */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      background: 'radial-gradient(ellipse 95% 65% at 50% 30%, rgba(15, 23, 42, 0.45) 0%, rgba(10, 15, 25, 0.88) 72%, #070A0F 100%)',
-                      pointerEvents: 'none',
-                    }}
-                  />
-
                   {/* ── 3. AUTHENTIC DYNAMIC ISLAND (CENTERED PILL) ── */}
                   <div
                     style={{
@@ -567,6 +544,7 @@ export default function AdminCarQrPage({
                       justifyContent: 'flex-end',
                       paddingRight: 10,
                       boxShadow: '0 2px 8px rgba(0,0,0,0.4)',
+                      pointerEvents: 'none',
                     }}
                   >
                     {/* Camera lens reflection */}
@@ -595,6 +573,7 @@ export default function AdminCarQrPage({
                       justifyContent: 'space-between',
                       zIndex: 40,
                       color: '#FFFFFF',
+                      pointerEvents: 'none',
                     }}
                   >
                     {/* Time on left */}
@@ -605,23 +584,21 @@ export default function AdminCarQrPage({
                         letterSpacing: '-0.02em',
                         color: 'rgba(255, 255, 255, 0.95)',
                         fontFamily: 'var(--font-heading)',
+                        textShadow: '0 1px 3px rgba(0,0,0,0.6)',
                       }}
                     >
                       16:26
                     </span>
 
                     {/* Icons on right */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      {/* Cellular 4 bars */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))' }}>
                       <div style={{ display: 'flex', alignItems: 'flex-end', gap: 1.5, height: 12 }}>
                         <span style={{ width: 3, height: 4, background: '#FFFFFF', borderRadius: 1 }} />
                         <span style={{ width: 3, height: 6, background: '#FFFFFF', borderRadius: 1 }} />
                         <span style={{ width: 3, height: 9, background: '#FFFFFF', borderRadius: 1 }} />
                         <span style={{ width: 3, height: 12, background: '#FFFFFF', borderRadius: 1 }} />
                       </div>
-                      {/* Wifi */}
                       <Wifi style={{ width: 15, height: 15, color: '#FFFFFF', strokeWidth: 2.2 }} />
-                      {/* Battery indicator outline + fill */}
                       <div
                         style={{
                           width: 24,
@@ -638,158 +615,26 @@ export default function AdminCarQrPage({
                     </div>
                   </div>
 
-                  {/* ── 5. SCREEN CONTENT: 20px HORIZONTAL PADDING, 62px TOP PADDING, 34px BOTTOM PADDING ── */}
+                  {/* ── 5. LIVE INTERACTIVE CUSTOMER APP VIEW ── */}
+                  <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+                    <CustomerAppView car={currentCar} isMockup={true} />
+                  </div>
+
+                  {/* ── 6. AUTHENTIC IOS HOME INDICATOR BAR ── */}
                   <div
                     style={{
-                      position: 'relative',
-                      zIndex: 20,
-                      width: '100%',
-                      height: '100%',
-                      paddingTop: 62,
-                      paddingBottom: 34,
-                      paddingLeft: 22,
-                      paddingRight: 22,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      fontFamily: 'var(--font-heading)',
+                      position: 'absolute',
+                      bottom: 8,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: 134,
+                      height: 5,
+                      borderRadius: 99,
+                      background: 'rgba(0, 0, 0, 0.35)',
+                      zIndex: 50,
+                      pointerEvents: 'none',
                     }}
-                  >
-                    {/* App Header below Dynamic Island */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span
-                        style={{
-                          fontSize: 11,
-                          fontWeight: 300,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.22em',
-                          color: 'rgba(255, 255, 255, 0.72)',
-                        }}
-                      >
-                        DZ RENT CAR
-                      </span>
-
-                      <span
-                        style={{
-                          padding: '3px 10px',
-                          borderRadius: 99,
-                          fontSize: 10.5,
-                          fontWeight: 700,
-                          background: isRented ? 'rgba(16, 185, 129, 0.22)' : 'rgba(255, 255, 255, 0.12)',
-                          color: isRented ? '#6EE7B7' : 'rgba(255, 255, 255, 0.85)',
-                          border: isRented ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(255, 255, 255, 0.2)',
-                          backdropFilter: 'blur(8px)',
-                        }}
-                      >
-                        {isRented ? 'En circulation' : 'Libre au parc'}
-                      </span>
-                    </div>
-
-                    {/* Middle Hero: Client Name & Car Information */}
-                    <div style={{ padding: '0 4px', margin: 'auto 0' }}>
-                      <span
-                        style={{
-                          fontSize: 11,
-                          fontWeight: 300,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.24em',
-                          color: 'rgba(255, 255, 255, 0.65)',
-                          display: 'block',
-                          marginBottom: 8,
-                        }}
-                      >
-                        Conducteur Enregistré
-                      </span>
-
-                      <h3
-                        style={{
-                          fontSize: 29,
-                          fontWeight: 800,
-                          color: '#FFFFFF',
-                          letterSpacing: '-0.025em',
-                          lineHeight: 1.15,
-                          margin: 0,
-                          textShadow: '0 4px 18px rgba(0, 0, 0, 0.85)',
-                        }}
-                      >
-                        {activeClientName}
-                      </h3>
-
-                      {/* Car Details Badge */}
-                      <div
-                        style={{
-                          marginTop: 14,
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 8,
-                          padding: '6px 14px',
-                          borderRadius: 99,
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          backdropFilter: 'blur(12px)',
-                          border: '1px solid rgba(255, 255, 255, 0.16)',
-                        }}
-                      >
-                        <span style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255, 255, 255, 0.95)' }}>
-                          {currentCar.name}
-                        </span>
-                        <span style={{ color: 'rgba(255, 255, 255, 0.3)' }}>·</span>
-                        <span
-                          style={{
-                            fontFamily: 'monospace',
-                            fontSize: 11.5,
-                            fontWeight: 800,
-                            color: '#FFFFFF',
-                          }}
-                        >
-                          {currentCar.plate}
-                        </span>
-                      </div>
-
-                      {/* Small verified assurance note */}
-                      <div
-                        style={{
-                          marginTop: 22,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          fontSize: 11,
-                          color: 'rgba(255, 255, 255, 0.5)',
-                        }}
-                      >
-                        <ShieldCheck style={{ width: 14, height: 14, color: '#34D399', flexShrink: 0 }} />
-                        <span>Session active vérifiée · Flotte DZ Rent Car</span>
-                      </div>
-                    </div>
-
-                    {/* Bottom: Signature & iOS Home Indicator Bar */}
-                    <div style={{ textAlign: 'center' }}>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          fontSize: 10.5,
-                          color: 'rgba(255, 255, 255, 0.4)',
-                          padding: '0 4px',
-                          marginBottom: 10,
-                        }}
-                      >
-                        <span>Voiture #{currentCar.id} de la flotte</span>
-                        <span>DZ RENT CAR © 2026</span>
-                      </div>
-
-                      {/* Authentic iOS Home Indicator Bar */}
-                      <div
-                        style={{
-                          width: 134,
-                          height: 5,
-                          borderRadius: 99,
-                          background: 'rgba(255, 255, 255, 0.65)',
-                          margin: '0 auto',
-                        }}
-                      />
-                    </div>
-                  </div>
+                  />
                 </div>
               </div>
             </div>
