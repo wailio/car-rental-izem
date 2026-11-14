@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { LiveRentalVehicle } from '@/lib/fleet-state'
 import { BRAND } from '@/lib/config'
 import {
-  Car,
   ShieldCheck,
   Clock,
   MapPin,
@@ -19,6 +18,7 @@ import {
   Copy,
   ExternalLink,
   Edit3,
+  X,
 } from 'lucide-react'
 
 interface CustomerAppViewProps {
@@ -35,12 +35,11 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
   // 'dashboard' = Screen 2 (Vehicle Card & Tracking)
   const [screen, setScreen] = useState<'welcome' | 'dashboard'>('welcome')
 
-  // Per user request: ONLY the first shape shows initially.
   // Tracking info slides down smoothly when clicking "Suivi de cette location".
   const [isTrackingExpanded, setIsTrackingExpanded] = useState(false)
 
-  // Google Review state
-  const [isWritingReview, setIsWritingReview] = useState(false)
+  // iOS Pop-out Bottom Sheet state for Google Reviews
+  const [isReviewSheetOpen, setIsReviewSheetOpen] = useState(false)
   const [reviewRating, setReviewRating] = useState(5)
   const [reviewText, setReviewText] = useState('')
   const [reviewCopiedToast, setReviewCopiedToast] = useState(false)
@@ -97,7 +96,10 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
         } catch {}
       }
       setReviewCopiedToast(true)
-      setTimeout(() => setReviewCopiedToast(false), 3500)
+      setTimeout(() => {
+        setReviewCopiedToast(false)
+        setIsReviewSheetOpen(false)
+      }, 2200)
     }
 
     // Open real Google reviews URL in a new tab
@@ -116,6 +118,20 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
         WebkitFontSmoothing: 'antialiased',
       }}
     >
+      <style>{`
+        @keyframes iosSheetEnter {
+          from {
+            transform: translateY(100%);
+          }
+          to {
+            transform: translateY(0%);
+          }
+        }
+        .animate-iosSheetEnter {
+          animation: iosSheetEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}</style>
+
       {/* ══════════════════════════════════════════════════════════════════════
           SCREEN 1 : WELCOME & AUTOMATIC CLIENT IDENTIFICATION (IMAGE 1 STYLE)
           ══════════════════════════════════════════════════════════════════════ */}
@@ -131,11 +147,11 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
         }}
       >
         <div>
-          {/* Top Hero Image with Smooth Layered Gradient Overlay (Zero Rendering Glitches) */}
+          {/* Top Hero Image with Smooth Layered Gradient Overlay */}
           <div className="relative w-full h-[250px] flex-shrink-0 overflow-hidden bg-[#F7F5F0]">
             <img
               src="/images/fleet-sunset.jpg"
-              alt="Flotte DZ Rent Car au coucher du soleil"
+              alt="Flotte IZEM MOTORS au coucher du soleil"
               className="w-full h-full object-cover object-center"
             />
             {/* Smooth transition from photo to warm cream background */}
@@ -150,17 +166,21 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
 
           {/* Body Content below the fade */}
           <div className="px-6 -mt-8 relative z-10">
-            {/* Brand Squircle Lockup */}
+            {/* Official IZEM MOTORS Brand Lockup with Chrome Emblem */}
             <div className="flex items-center gap-3 mb-3.5">
-              <div className="w-10 h-10 rounded-2xl bg-[#0D6D70] flex items-center justify-center shadow-md">
-                <Car className="w-5 h-5 text-white" strokeWidth={2.2} />
+              <div className="w-12 h-12 rounded-2xl bg-[#07131B] border border-black/[0.08] flex items-center justify-center shadow-md p-1.5 overflow-hidden flex-shrink-0">
+                <img
+                  src="/images/izem-emblem.png"
+                  alt="IZEM MOTORS"
+                  className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
+                />
               </div>
               <div>
-                <h2 className="text-[15px] font-bold tracking-tight text-[#111827] leading-none mb-0.5">
-                  DZ RENT CAR
+                <h2 className="text-[16px] font-black tracking-tight text-[#111827] leading-none mb-0.5">
+                  IZEM MOTORS
                 </h2>
-                <p className="text-[11px] font-medium text-[#6B7280] tracking-wide">
-                  Service Privilège · Alger
+                <p className="text-[11px] font-medium text-[#0D6D70] tracking-wide">
+                  Location de Voitures · Alger
                 </p>
               </div>
             </div>
@@ -229,7 +249,7 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
           </div>
 
           <p className="text-[10px] text-center text-[#9CA3AF] leading-tight">
-            DZ Rent Car · Remise aéroportuaire 24/7 sans formalité d&apos;attente.
+            IZEM MOTORS · Remise aéroportuaire 24/7 sans formalité d&apos;attente.
           </p>
         </div>
       </div>
@@ -255,20 +275,24 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
             paddingTop: isMockup ? '56px' : 'calc(env(safe-area-inset-top, 0px) + 20px)',
           }}
         >
-          {/* Top iOS Header Bar: Logo, Notification Bell, User Avatar */}
+          {/* Top iOS Header Bar: Logo Squircle with Emblem, Notification Bell, User Avatar */}
           <div className="flex items-center justify-between mb-3.5">
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => setScreen('welcome')}
-                className="w-9 h-9 rounded-2xl bg-[#0D6D70] flex items-center justify-center shadow-sm cursor-pointer hover:opacity-90 active:scale-95 transition-all"
+                className="w-10 h-10 rounded-2xl bg-[#07131B] border border-black/[0.08] flex items-center justify-center shadow-sm p-1 cursor-pointer hover:opacity-90 active:scale-95 transition-all flex-shrink-0"
                 title="Revenir à l'accueil"
               >
-                <Car className="w-4 h-4 text-white" strokeWidth={2.2} />
+                <img
+                  src="/images/izem-emblem.png"
+                  alt="IZEM MOTORS"
+                  className="w-full h-full object-contain"
+                />
               </button>
               <div>
-                <div className="text-[13px] font-bold text-[#111827] leading-none mb-0.5">
-                  DZ RENT CAR
+                <div className="text-[13px] font-black text-[#111827] leading-none mb-0.5">
+                  IZEM MOTORS
                 </div>
                 <div className="text-[10px] font-medium text-[#6B7280]">
                   Location en cours
@@ -298,12 +322,7 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
             </h2>
           </div>
 
-          {/* ── THE HERO VEHICLE SHAPE (NEW CLEAN ASYMMETRICAL STRUCTURE) ───────
-              1. Removed 'en circulation' badge completely.
-              2. Put the 3 lines in top taking its place (leaving middle spacious).
-              3. The car image shines through cleanly in the middle.
-              4. The 3 frosted glass chips and the button sit at bottom.
-          ──────────────────────────────────────────────────────────────────────── */}
+          {/* ── THE HERO VEHICLE SHAPE (CLEAN ASYMMETRICAL STRUCTURE) ─────────── */}
           <div
             className="relative w-full rounded-[26px] overflow-hidden shadow-xl mb-4 border border-black/[0.08] text-white"
             style={{
@@ -492,13 +511,13 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
                 </div>
               </div>
 
-              {/* ── 3. GOOGLE REVIEW SHAPE (AUTHENTIC GOOGLE BADGE & USER REVIEW WRITER) ── */}
-              <div className="bg-white rounded-2xl p-4 border border-black/[0.06] shadow-sm transition-all duration-300">
+              {/* ── 3. GOOGLE REVIEW SHAPE (TRIGGERS IOS BOTTOM POP-OUT WINDOW) ── */}
+              <div
+                onClick={() => setIsReviewSheetOpen(true)}
+                className="bg-white rounded-2xl p-4 border border-black/[0.06] shadow-sm transition-all duration-200 cursor-pointer hover:bg-slate-50/80 active:scale-[0.99]"
+              >
                 {/* Header Row: Google G icon, Rating and Review Count */}
-                <div
-                  onClick={() => setIsWritingReview(!isWritingReview)}
-                  className="flex items-center justify-between cursor-pointer"
-                >
+                <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {/* Authentic Multicolored Google G Icon */}
                     <div className="w-10 h-10 rounded-2xl bg-white border border-black/[0.08] shadow-sm flex items-center justify-center flex-shrink-0">
@@ -543,86 +562,16 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
                   </div>
 
                   {/* Right button pill */}
-                  <button
-                    type="button"
-                    className="px-2.5 py-1 rounded-full bg-[#E6F4F4] text-[#0D6D70] font-bold text-[11px] flex items-center gap-1"
-                  >
+                  <span className="px-2.5 py-1 rounded-full bg-[#E6F4F4] text-[#0D6D70] font-bold text-[11px] flex items-center gap-1">
                     <Edit3 className="w-3 h-3" />
-                    <span>{isWritingReview ? 'Fermer' : 'Noter'}</span>
-                  </button>
+                    <span>Noter</span>
+                  </span>
                 </div>
-
-                {/* Interactive Review Writing Drawer */}
-                {isWritingReview && (
-                  <div className="mt-3.5 pt-3.5 border-t border-black/[0.06] space-y-3 animate-fadeIn">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold text-[#4B5563]">
-                        Votre note globale :
-                      </span>
-                      {/* Interactive Star Picker */}
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            type="button"
-                            onClick={() => setReviewRating(star)}
-                            className="p-0.5 cursor-pointer hover:scale-110 active:scale-95 transition-transform"
-                          >
-                            <Star
-                              className={`w-5 h-5 ${
-                                star <= reviewRating
-                                    ? 'fill-[#F59E0B] stroke-[#F59E0B]'
-                                    : 'fill-transparent stroke-[#D1D5DB]'
-                              }`}
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Clean iOS Review Textarea */}
-                    <textarea
-                      value={reviewText}
-                      onChange={(e) => setReviewText(e.target.value)}
-                      rows={3}
-                      placeholder="Écrivez votre avis ici (accueil à l'aéroport d'Alger, propreté du véhicule, ponctualité...)..."
-                      className="w-full rounded-xl p-3 bg-[#F9FAFB] border border-black/[0.08] text-[12.5px] text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#2DD4BF] focus:bg-white transition-all resize-none"
-                    />
-
-                    {/* Copy Toast Alert when published */}
-                    {reviewCopiedToast && (
-                      <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11.5px] font-medium flex items-center gap-2">
-                        <Check className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
-                        <span>Texte copié ! Collez-le simplement dans Google Maps.</span>
-                      </div>
-                    )}
-
-                    {/* Actions: Terminé / Publier sur Google */}
-                    <div className="flex items-center gap-2 pt-1">
-                      <button
-                        type="button"
-                        onClick={handlePublishGoogleReview}
-                        className="flex-1 py-2.5 px-4 rounded-xl bg-[#2DD4BF] hover:bg-[#14B8A6] active:scale-[0.98] text-[#042F2E] font-bold text-[12.5px] transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
-                      >
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>Publier sur Google</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setIsWritingReview(false)}
-                        className="py-2.5 px-3 rounded-xl bg-slate-100 text-[#4B5563] font-medium text-[12px] hover:bg-slate-200 cursor-pointer"
-                      >
-                        Annuler
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* 4. Direct 24/7 Assistance Call Button */}
               <a
-                href="tel:+213555333316"
+                href="tel:+213772233664"
                 className="w-full py-3 px-4 rounded-xl bg-white hover:bg-slate-50 border border-black/[0.08] shadow-sm flex items-center justify-between text-[#111827] active:scale-[0.98] transition-transform"
               >
                 <div className="flex items-center gap-2.5">
@@ -631,7 +580,7 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
                   </div>
                   <div className="text-left">
                     <div className="text-[12px] font-bold leading-none mb-0.5">
-                      Assistance 24/7 DZ Rent Car
+                      Assistance 24/7 IZEM MOTORS
                     </div>
                     <div className="text-[10px] text-[#6B7280]">
                       Agent dédié à l&apos;Aéroport d&apos;Alger
@@ -644,6 +593,139 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
           </div>
         </div>
       </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          AUTHENTIC APPLE/IOS BOTTOM SHEET POP-OUT WINDOW FOR GOOGLE REVIEWS
+          ══════════════════════════════════════════════════════════════════════ */}
+      {isReviewSheetOpen && (
+        <div className="absolute inset-0 z-50 flex items-end justify-center pointer-events-auto">
+          {/* Dimmed backdrop */}
+          <div
+            onClick={() => setIsReviewSheetOpen(false)}
+            className="absolute inset-0 bg-black/45 backdrop-blur-sm transition-opacity duration-300"
+          />
+
+          {/* Bottom Sheet Window (Pops out smoothly from under) */}
+          <div
+            className="relative z-10 w-full bg-white rounded-t-[32px] p-5 shadow-2xl border-t border-black/[0.06] animate-iosSheetEnter"
+            style={{
+              maxHeight: '90%',
+              paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 20px)',
+            }}
+          >
+            {/* iOS Drag Handle */}
+            <div className="w-10 h-1 bg-black/20 rounded-full mx-auto mb-3" />
+
+            {/* Header with Google icon, title and Close X */}
+            <div className="flex items-start justify-between mb-3.5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-white border border-black/[0.08] shadow-sm flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-[15px] font-bold text-[#111827] leading-tight">
+                    Votre avis sur IZEM MOTORS
+                  </h3>
+                  <p className="text-[11.5px] text-[#6B7280]">
+                    Partagez votre séjour à l&apos;Aéroport d&apos;Alger
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsReviewSheetOpen(false)}
+                className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-[#6B7280] hover:bg-slate-200 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Interactive Star Picker */}
+            <div className="mb-3.5 text-center bg-slate-50 rounded-2xl py-2.5 px-3 border border-black/[0.04]">
+              <div className="flex items-center justify-center gap-2 mb-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setReviewRating(star)}
+                    className="p-1 cursor-pointer hover:scale-115 active:scale-95 transition-transform"
+                  >
+                    <Star
+                      className={`w-7 h-7 ${
+                        star <= reviewRating
+                          ? 'fill-[#F59E0B] stroke-[#F59E0B]'
+                          : 'fill-transparent stroke-[#D1D5DB]'
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+              <div className="text-[11.5px] font-bold text-[#4B5563]">
+                {reviewRating === 5
+                  ? '★★★★★ Expérience exceptionnelle !'
+                  : reviewRating === 4
+                  ? '★★★★ Très satisfait'
+                  : `${reviewRating} étoiles sur 5`}
+              </div>
+            </div>
+
+            {/* iOS Textarea */}
+            <textarea
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              rows={4}
+              placeholder="Écrivez votre avis ici (accueil à l'aéroport d'Alger, propreté de la voiture, ponctualité...)..."
+              className="w-full rounded-2xl p-3.5 bg-[#F9FAFB] border border-black/[0.08] text-[13px] text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#2DD4BF] focus:bg-white transition-all resize-none mb-3"
+            />
+
+            {/* Confirmation Toast Alert */}
+            {reviewCopiedToast && (
+              <div className="mb-3 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11.5px] font-medium flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
+                <span>Texte copié ! Collez-le simplement dans Google Maps.</span>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={handlePublishGoogleReview}
+                className="w-full py-3.5 px-4 rounded-2xl bg-[#2DD4BF] hover:bg-[#14B8A6] active:scale-[0.98] text-[#042F2E] font-bold text-[14px] transition-all flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(45,212,191,0.35)] cursor-pointer"
+              >
+                <Copy className="w-4 h-4" />
+                <span>Publier sur Google</span>
+                <ExternalLink className="w-4 h-4" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsReviewSheetOpen(false)}
+                className="w-full py-2.5 text-center text-[#6B7280] font-medium text-[12.5px] hover:text-[#111827] cursor-pointer"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
