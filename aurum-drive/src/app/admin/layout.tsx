@@ -37,6 +37,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               const perms: string[] = Array.isArray(user?.permissions) ? user.permissions : []
               const routePermMap: Record<string, string> = {
                 '/admin/dashboard': 'dashboard',
+                '/admin/calendrier': 'sales',
                 '/admin/products': 'products',
                 '/admin/orders': 'orders',
                 '/admin/sales': 'sales',

@@ -10,6 +10,7 @@ import {
   Car,
   Globe,
   CalendarCheck,
+  Calendar,
   Key,
   Settings,
   LogOut,
@@ -37,6 +38,7 @@ const NAV: { group: string | null; items: NavItem[] }[] = [
   {
     group: 'Gestion Parc',
     items: [
+      { label: 'Calendrier', href: '/admin/calendrier', icon: Calendar, permKey: 'sales' },
       { label: 'Locations en cours', href: '/admin/sales', icon: Key, permKey: 'sales' },
       { label: 'Véhicules & Flotte', href: '/admin/products', icon: Car, permKey: 'products' },
       { label: 'Réservations & Attente', href: '/admin/orders', icon: CalendarCheck, permKey: 'orders' },
