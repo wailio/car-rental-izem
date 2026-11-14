@@ -305,6 +305,19 @@ export default function LiveRentalsPage() {
     } catch {}
   }, [])
 
+  // Helper to sync fleet state to both localStorage and the backend API
+  const syncFleetState = (updatedFleet: LiveRentalVehicle[]) => {
+    setFleet(updatedFleet)
+    try {
+      localStorage.setItem('izem_live_fleet', JSON.stringify(updatedFleet))
+      fetch('/api/fleet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedFleet),
+      }).catch(() => {})
+    } catch {}
+  }
+
   // ── Date of Today Auto Pre-Fill ──
   const today = useMemo(() => new Date(), [])
   const todayDay = useMemo(() => String(today.getDate()).padStart(2, '0'), [today])
@@ -479,9 +492,8 @@ export default function LiveRentalsPage() {
       return c
     })
 
-    setFleet(updatedFleet)
+    syncFleetState(updatedFleet)
     try {
-      localStorage.setItem('izem_live_fleet', JSON.stringify(updatedFleet))
       if (assignOrderId) {
         const prev = JSON.parse(localStorage.getItem('assigned_order_ids') || '[]')
         if (!prev.includes(assignOrderId)) {
@@ -520,10 +532,7 @@ export default function LiveRentalsPage() {
       return c
     })
 
-    setFleet(updatedFleet)
-    try {
-      localStorage.setItem('izem_live_fleet', JSON.stringify(updatedFleet))
-    } catch {}
+    syncFleetState(updatedFleet)
     showIosToast('Client retiré de la file d\'attente ✓', 'info')
   }
 
@@ -601,18 +610,17 @@ export default function LiveRentalsPage() {
     })
     if (!confirmed) return
 
-    setFleet((prev) =>
-      prev.map((c) => {
-        if (c.id === carId) {
-          return {
-            ...c,
-            status: 'available',
-            rental: undefined,
-          }
+    const updated = fleet.map((c) => {
+      if (c.id === carId) {
+        return {
+          ...c,
+          status: 'available' as const,
+          rental: undefined,
         }
-        return c
-      })
-    )
+      }
+      return c
+    })
+    syncFleetState(updated)
     setClientName('')
     setClientPhone('')
     setHandoverDay(todayDay)
@@ -649,27 +657,26 @@ export default function LiveRentalsPage() {
     const remainingHours = totalHours
     const remainingText = days >= 1 ? `${days}j` : `${totalHours}h`
 
-    setFleet((prev) =>
-      prev.map((c) => {
-        if (c.id === carId) {
-          return {
-            ...c,
-            status: 'rented',
-            rental: {
-              clientName: clientName.trim(),
-              phone: clientPhone.trim() || '0550 12 34 56',
-              startDate: startDateText,
-              endDate: endDateText,
-              totalHours,
-              remainingHours,
-              remainingText,
-              pickupLocation: pickupPlace,
-            },
-          }
+    const updated = fleet.map((c) => {
+      if (c.id === carId) {
+        return {
+          ...c,
+          status: 'rented' as const,
+          rental: {
+            clientName: clientName.trim(),
+            phone: clientPhone.trim() || '0550 12 34 56',
+            startDate: startDateText,
+            endDate: endDateText,
+            totalHours,
+            remainingHours,
+            remainingText,
+            pickupLocation: pickupPlace,
+          },
         }
-        return c
-      })
-    )
+      }
+      return c
+    })
+    syncFleetState(updated)
 
     setClientName('')
     setClientPhone('')

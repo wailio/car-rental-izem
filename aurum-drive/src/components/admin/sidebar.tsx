@@ -12,6 +12,7 @@ import {
   CalendarCheck,
   Calendar,
   Key,
+  QrCode,
   Settings,
   LogOut,
   ChevronRight,
@@ -40,6 +41,7 @@ const NAV: { group: string | null; items: NavItem[] }[] = [
     items: [
       { label: 'Locations en cours', href: '/admin/sales', icon: Key, permKey: 'sales' },
       { label: 'Calendrier', href: '/admin/calendrier', icon: Calendar, permKey: 'sales' },
+      { label: 'QR Codes Flotte', href: '/admin/qr/1', icon: QrCode, permKey: 'sales' },
       { label: 'Véhicules & Flotte', href: '/admin/products', icon: Car, permKey: 'products' },
       { label: 'Réservations & Attente', href: '/admin/orders', icon: CalendarCheck, permKey: 'orders' },
     ],
@@ -145,7 +147,10 @@ export default function AdminSidebar() {
     }
   }
 
-  const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
+  const isActive = (href: string) =>
+    pathname === href ||
+    pathname.startsWith(href + '/') ||
+    (href.startsWith('/admin/qr') && pathname.startsWith('/admin/qr'))
   const isSettingsActive = pathname === '/admin/settings' || pathname.startsWith('/admin/settings/')
 
   function applyHover(el: HTMLElement) {

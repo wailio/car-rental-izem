@@ -38,6 +38,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               const routePermMap: Record<string, string> = {
                 '/admin/dashboard': 'dashboard',
                 '/admin/calendrier': 'sales',
+                '/admin/qr': 'sales',
                 '/admin/products': 'products',
                 '/admin/orders': 'orders',
                 '/admin/sales': 'sales',
