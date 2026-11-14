@@ -147,32 +147,32 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
         }}
       >
         <div>
-          {/* Top Hero Image with Smooth Layered Gradient Overlay */}
+          {/* Top Hero Image with Two-Way Soft Fades (No dark spot at top edge, perfectly melted) */}
           <div className="relative w-full h-[250px] flex-shrink-0 overflow-hidden bg-[#F7F5F0]">
             <img
               src="/images/fleet-sunset.jpg"
               alt="Flotte IZEM MOTORS au coucher du soleil"
               className="w-full h-full object-cover object-center"
             />
-            {/* Smooth transition from photo to warm cream background */}
+            {/* Top and Bottom gentle transitions into #F7F5F0 */}
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  'linear-gradient(to bottom, rgba(247,245,240,0) 30%, rgba(247,245,240,0.5) 60%, rgba(247,245,240,0.92) 85%, #F7F5F0 100%)',
+                  'linear-gradient(to bottom, rgba(247,245,240,0.6) 0%, rgba(247,245,240,0) 22%, rgba(247,245,240,0.4) 60%, rgba(247,245,240,0.95) 86%, #F7F5F0 100%)',
               }}
             />
           </div>
 
           {/* Body Content below the fade */}
           <div className="px-6 -mt-8 relative z-10">
-            {/* Official IZEM MOTORS Brand Lockup with Chrome Emblem */}
+            {/* Official IZEM MOTORS Brand Lockup with Teal Squircle and Chrome Lion Emblem */}
             <div className="flex items-center gap-3 mb-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-[#07131B] border border-black/[0.08] flex items-center justify-center shadow-md p-1.5 overflow-hidden flex-shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-[#0D6D70] border border-[#0D6D70]/20 flex items-center justify-center shadow-md p-1.5 overflow-hidden flex-shrink-0">
                 <img
                   src="/images/izem-emblem.png"
                   alt="IZEM MOTORS"
-                  className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]"
+                  className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
                 />
               </div>
               <div>
@@ -258,7 +258,7 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
           SCREEN 2 : STATS & REAL-TIME TRACKING DASHBOARD (NO TASK BAR)
           ══════════════════════════════════════════════════════════════════════ */}
       <div
-        className="absolute inset-0 w-full h-full overflow-y-auto overscroll-contain transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between"
+        className="absolute inset-0 w-full h-full overflow-y-auto overscroll-contain transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col"
         style={{
           transform: screen === 'dashboard' ? 'translateX(0%)' : 'translateX(100%)',
           opacity: screen === 'dashboard' ? 1 : 0,
@@ -268,26 +268,25 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
           background: '#F7F5F0',
         }}
       >
-        {/* Main Dashboard Content */}
+        {/* ── STICKY TOP IOS HEADER BAR: GUARENTEES CONTENT NEVER BLEEDS INTO UPPER SIDE ── */}
         <div
-          className="flex-1 px-5 pb-10"
+          className="sticky top-0 z-30 w-full px-5 pb-3 bg-[#F7F5F0]/95 backdrop-blur-md border-b border-black/[0.04]"
           style={{
-            paddingTop: isMockup ? '56px' : 'calc(env(safe-area-inset-top, 0px) + 20px)',
+            paddingTop: isMockup ? '20px' : 'calc(env(safe-area-inset-top, 0px) + 16px)',
           }}
         >
-          {/* Top iOS Header Bar: Logo Squircle with Emblem, Notification Bell, User Avatar */}
-          <div className="flex items-center justify-between mb-3.5">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => setScreen('welcome')}
-                className="w-10 h-10 rounded-2xl bg-[#07131B] border border-black/[0.08] flex items-center justify-center shadow-sm p-1 cursor-pointer hover:opacity-90 active:scale-95 transition-all flex-shrink-0"
+                className="w-10 h-10 rounded-2xl bg-[#0D6D70] border border-[#0D6D70]/20 flex items-center justify-center shadow-sm p-1 cursor-pointer hover:opacity-90 active:scale-95 transition-all flex-shrink-0"
                 title="Revenir à l'accueil"
               >
                 <img
                   src="/images/izem-emblem.png"
                   alt="IZEM MOTORS"
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain filter drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]"
                 />
               </button>
               <div>
@@ -311,9 +310,12 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
               </div>
             </div>
           </div>
+        </div>
 
+        {/* ── MAIN DASHBOARD SCROLLABLE BODY ── */}
+        <div className="flex-1 px-5 pt-3 pb-10 space-y-3.5">
           {/* Greeting */}
-          <div className="mb-3.5">
+          <div>
             <div className="text-[12px] font-medium text-[#6B7280]">
               Bonjour, {firstName}
             </div>
@@ -324,7 +326,7 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
 
           {/* ── THE HERO VEHICLE SHAPE (CLEAN ASYMMETRICAL STRUCTURE) ─────────── */}
           <div
-            className="relative w-full rounded-[26px] overflow-hidden shadow-xl mb-4 border border-black/[0.08] text-white"
+            className="relative w-full rounded-[26px] overflow-hidden shadow-xl border border-black/[0.08] text-white"
             style={{
               minHeight: '250px',
               background: '#0F172A',
