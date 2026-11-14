@@ -56,10 +56,11 @@ export function HeroSection() {
             muted
             loop
             playsInline
-            poster="/images/hero-fleet-poster.jpg"
+            preload="auto"
+            poster="/images/bgvidbg-poster.jpg"
             className="w-full h-full object-cover object-center"
           >
-            <source src="/videos/herosec-vid.mp4" type="video/mp4" />
+            <source src="/videos/bgvidbg.mp4" type="video/mp4" />
           </video>
 
           {/* Cinematic Scrims (Balanced for clear video car visibility + high text contrast) */}

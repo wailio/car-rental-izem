@@ -169,6 +169,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        <link rel="preload" as="image" href="/images/bgvidbg-poster.jpg" fetchPriority="high" />
         <meta name="apple-mobile-web-app-title" content="IZEM MOTORS" />
         <meta name="application-name" content="IZEM MOTORS" />
         <meta name="msapplication-TileColor" content="#0B7584" />
