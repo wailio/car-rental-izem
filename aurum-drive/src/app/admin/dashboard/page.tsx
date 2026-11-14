@@ -501,6 +501,79 @@ export default function AdminDashboard() {
 
   const todayReturnsCount = todayReturns > 0 ? todayReturns : 3
 
+  // ── 5 Derniers clients (linked with system / salesData / orders) ──
+  const fallbackRecentClients = [
+    {
+      id: 'c-1',
+      name: 'Karim Benali',
+      phone: '0550 12 34 56',
+      vehicle: 'Audi A3 Sportback',
+      amount: 44000,
+      dates: '18 oct. → 24 oct.',
+      timeAgo: 'Il y a 3h',
+      status: 'active' as const,
+      statusLabel: 'En cours',
+    },
+    {
+      id: 'c-2',
+      name: 'Yacine Mansouri',
+      phone: '0661 88 92 14',
+      vehicle: 'Volkswagen T-Cross',
+      amount: 51000,
+      dates: '19 oct. → 23 oct.',
+      timeAgo: 'Hier',
+      status: 'active' as const,
+      statusLabel: 'En cours',
+    },
+    {
+      id: 'c-3',
+      name: 'Amine Zerrouk',
+      phone: '0662 33 44 55',
+      vehicle: 'Geely Coolray Sport',
+      amount: 60000,
+      dates: '20 oct. → 27 oct.',
+      timeAgo: 'Il y a 2j',
+      status: 'active' as const,
+      statusLabel: 'En cours',
+    },
+    {
+      id: 'c-4',
+      name: 'Sofiane Kaci',
+      phone: '0560 11 22 33',
+      vehicle: 'Volkswagen T-Cross',
+      amount: 51000,
+      dates: '22 oct. → 26 oct.',
+      timeAgo: 'Il y a 3j',
+      status: 'confirmed' as const,
+      statusLabel: 'Confirmé',
+    },
+    {
+      id: 'c-5',
+      name: 'Farid Khelifi',
+      phone: '0770 45 67 89',
+      vehicle: 'MG 5 Berline',
+      amount: 31500,
+      dates: '17 oct. → 22 oct.',
+      timeAgo: 'Il y a 4j',
+      status: 'active' as const,
+      statusLabel: 'En cours',
+    },
+  ]
+
+  const recentClients = salesData.length > 0
+    ? salesData.slice(0, 5).map((s: any, idx: number) => ({
+        id: s.id || `sale-${idx}`,
+        name: s.customer_name || 'Client',
+        phone: s.phone || '0550 00 00 00',
+        vehicle: s.product_id || 'Véhicule de flotte',
+        amount: Number(s.amount) || 45000,
+        dates: s.pickup_date && s.return_date ? `${s.pickup_date} → ${s.return_date}` : 'Réservation en cours',
+        timeAgo: s.created_at ? new Date(s.created_at).toLocaleDateString('fr-DZ', { day: 'numeric', month: 'short' }) : 'Récemment',
+        status: 'active' as const,
+        statusLabel: 'En cours',
+      }))
+    : fallbackRecentClients
+
   // Filtered fleet list
   const filteredFleet = INITIAL_FLEET_STATUS.filter(car => {
     if (fleetFilter === 'rented') return car.status === 'rented'
@@ -955,6 +1028,188 @@ export default function AdminDashboard() {
                 </div>
               </Link>
             )}
+
+            {/* ── SECTION: 5 DERNIERS CLIENTS (UNDER DATA, ABOVE CARS) ───────── */}
+            <div data-pop="left" className="admin-card" style={{ borderRadius: 18, padding: '18px 22px' }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <Users style={{ width: 16, height: 16, color: '#0B7584', strokeWidth: 2, flexShrink: 0 }} />
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                    Derniers clients <span style={{ color: '#94A3B8', fontWeight: 500, textTransform: 'none' }}>• 5 dernières locations</span>
+                  </span>
+                </div>
+
+                <Link
+                  href="/admin/orders"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                    fontSize: 11.5,
+                    color: '#0B7584',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    transition: 'color 0.15s ease',
+                  }}
+                >
+                  Voir tout <ArrowUpRight style={{ width: 13, height: 13 }} />
+                </Link>
+              </div>
+
+              {/* Rows */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {recentClients.map((client, i) => (
+                  <div
+                    key={client.id || i}
+                    className="admin-row"
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1.4fr 1.4fr 1.3fr 1fr 0.9fr 36px',
+                      alignItems: 'center',
+                      gap: 12,
+                      padding: '10px 14px',
+                      borderRadius: 12,
+                      background: '#FFFFFF',
+                      border: '1px solid rgba(0, 0, 0, 0.05)',
+                    }}
+                  >
+                    {/* Client name + phone */}
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: '#0F172A',
+                        margin: 0,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}>
+                        {client.name}
+                      </p>
+                      <p style={{
+                        fontSize: 11,
+                        color: '#64748B',
+                        margin: '1px 0 0 0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        whiteSpace: 'nowrap',
+                      }}>
+                        <Phone style={{ width: 10, height: 10, color: '#94A3B8' }} />
+                        {client.phone}
+                      </p>
+                    </div>
+
+                    {/* Vehicle */}
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{
+                        fontSize: 12.5,
+                        fontWeight: 600,
+                        color: '#334155',
+                        margin: 0,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}>
+                        {client.vehicle}
+                      </p>
+                      <p style={{
+                        fontSize: 10.5,
+                        color: '#94A3B8',
+                        margin: '1px 0 0 0',
+                        whiteSpace: 'nowrap',
+                      }}>
+                        Contrat de location
+                      </p>
+                    </div>
+
+                    {/* Dates */}
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{
+                        fontSize: 11.5,
+                        color: '#475569',
+                        fontWeight: 500,
+                        margin: 0,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}>
+                        {client.dates}
+                      </p>
+                      <p style={{
+                        fontSize: 10.5,
+                        color: '#94A3B8',
+                        margin: '1px 0 0 0',
+                        whiteSpace: 'nowrap',
+                      }}>
+                        {client.timeAgo}
+                      </p>
+                    </div>
+
+                    {/* Amount */}
+                    <div style={{ minWidth: 0, whiteSpace: 'nowrap' }}>
+                      <span className="tnum" style={{ fontSize: 14, fontWeight: 800, color: '#0F172A' }}>
+                        {N(client.amount)}
+                      </span>
+                      <span style={{ fontSize: 10.5, fontWeight: 600, color: '#64748B', marginLeft: 3 }}>
+                        DA
+                      </span>
+                    </div>
+
+                    {/* Status Pill */}
+                    <div style={{ minWidth: 0 }}>
+                      <span style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 4,
+                        padding: '2px 8px',
+                        borderRadius: 99,
+                        fontSize: 10.5,
+                        fontWeight: 600,
+                        background: client.status === 'confirmed' ? '#FFFBEB' : '#ECFDF5',
+                        color: client.status === 'confirmed' ? '#B45309' : '#047857',
+                        border: client.status === 'confirmed' ? '1px solid #FDE68A' : '1px solid #A7F3D0',
+                        whiteSpace: 'nowrap',
+                      }}>
+                        <span style={{
+                          width: 5,
+                          height: 5,
+                          borderRadius: 99,
+                          background: client.status === 'confirmed' ? '#F59E0B' : '#10B981',
+                        }} />
+                        {client.statusLabel}
+                      </span>
+                    </div>
+
+                    {/* Quick WhatsApp Action */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                      <a
+                        href={`https://wa.me/213${client.phone.replace(/\s+/g, '').replace(/^0/, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Contacter sur WhatsApp"
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 8,
+                          background: '#ECFDF5',
+                          border: '1px solid #A7F3D0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#047857',
+                          textDecoration: 'none',
+                          transition: 'transform 0.15s ease',
+                        }}
+                      >
+                        <MessageCircle style={{ width: 13, height: 13 }} />
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             {/* ── SECTION: ÉTAT DE LA FLOTTE EN TEMPS RÉEL (LOUÉS VS DISPONIBLES) ─ */}
             {/* Left side: Client who rented it / availability info. Right side: Car photo */}
