@@ -6,6 +6,14 @@ import { usePathname } from 'next/navigation'
 export function ScrollPopObserver() {
   const pathname = usePathname()
 
+  if (
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/car/") ||
+    pathname?.startsWith("/c/")
+  ) {
+    return null
+  }
+
   useEffect(() => {
     // Respect reduced motion — reveal everything immediately
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

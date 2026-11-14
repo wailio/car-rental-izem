@@ -572,7 +572,7 @@ export default function AdminCarQrPage({
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       zIndex: 40,
-                      color: '#FFFFFF',
+                      color: '#1C1C1E',
                       pointerEvents: 'none',
                     }}
                   >
@@ -582,35 +582,34 @@ export default function AdminCarQrPage({
                         fontSize: 15,
                         fontWeight: 600,
                         letterSpacing: '-0.02em',
-                        color: 'rgba(255, 255, 255, 0.95)',
+                        color: '#1C1C1E',
                         fontFamily: 'var(--font-heading)',
-                        textShadow: '0 1px 3px rgba(0,0,0,0.6)',
                       }}
                     >
                       16:26
                     </span>
 
                     {/* Icons on right */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <div style={{ display: 'flex', alignItems: 'flex-end', gap: 1.5, height: 12 }}>
-                        <span style={{ width: 3, height: 4, background: '#FFFFFF', borderRadius: 1 }} />
-                        <span style={{ width: 3, height: 6, background: '#FFFFFF', borderRadius: 1 }} />
-                        <span style={{ width: 3, height: 9, background: '#FFFFFF', borderRadius: 1 }} />
-                        <span style={{ width: 3, height: 12, background: '#FFFFFF', borderRadius: 1 }} />
+                        <span style={{ width: 3, height: 4, background: '#1C1C1E', borderRadius: 1 }} />
+                        <span style={{ width: 3, height: 6, background: '#1C1C1E', borderRadius: 1 }} />
+                        <span style={{ width: 3, height: 9, background: '#1C1C1E', borderRadius: 1 }} />
+                        <span style={{ width: 3, height: 12, background: '#1C1C1E', borderRadius: 1 }} />
                       </div>
-                      <Wifi style={{ width: 15, height: 15, color: '#FFFFFF', strokeWidth: 2.2 }} />
+                      <Wifi style={{ width: 15, height: 15, color: '#1C1C1E', strokeWidth: 2.2 }} />
                       <div
                         style={{
                           width: 24,
                           height: 12,
                           borderRadius: 3.5,
-                          border: '1.2px solid rgba(255,255,255,0.85)',
+                          border: '1.2px solid rgba(28,28,30,0.85)',
                           padding: 1.5,
                           display: 'flex',
                           alignItems: 'center',
                         }}
                       >
-                        <div style={{ width: 14, height: 7, background: '#FFFFFF', borderRadius: 1.5 }} />
+                        <div style={{ width: 14, height: 7, background: '#1C1C1E', borderRadius: 1.5 }} />
                       </div>
                     </div>
                   </div>
@@ -619,22 +618,6 @@ export default function AdminCarQrPage({
                   <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
                     <CustomerAppView car={currentCar} isMockup={true} />
                   </div>
-
-                  {/* ── 6. AUTHENTIC IOS HOME INDICATOR BAR ── */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: 8,
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      width: 134,
-                      height: 5,
-                      borderRadius: 99,
-                      background: 'rgba(0, 0, 0, 0.35)',
-                      zIndex: 50,
-                      pointerEvents: 'none',
-                    }}
-                  />
                 </div>
               </div>
             </div>

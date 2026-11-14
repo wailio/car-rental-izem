@@ -25,7 +25,11 @@ const Cursor = dynamic(
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  if (pathname?.startsWith("/admin")) {
+  if (
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/car/") ||
+    pathname?.startsWith("/c/")
+  ) {
     return <>{children}</>;
   }
 
