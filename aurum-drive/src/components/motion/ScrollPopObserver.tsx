@@ -23,30 +23,29 @@ export function ScrollPopObserver() {
       return
     }
 
-    // Trigger smoothly as elements approach the viewport bottom (natural eye-comfy reveal)
+    // Trigger early ahead of viewport bottom so shapes are smoothly visible as user arrives
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const el = entry.target as HTMLElement
-            // Stagger children fire on parent reveal
             el.classList.add('pop-in')
             observer.unobserve(el)
           }
         })
       },
       {
-        threshold: 0.05,
-        rootMargin: '0px 0px -40px 0px',
+        threshold: 0.01,
+        rootMargin: '100px 0px 80px 0px',
       }
     )
 
     const scanAndObserve = () => {
       document.querySelectorAll('[data-pop]:not(.pop-in)').forEach((el) => {
-        // Elements already above fold should NOT animate (they're visible on load)
         const rect = el.getBoundingClientRect()
-        const alreadyVisible = rect.top < window.innerHeight - 40 && rect.bottom > 0
-        if (alreadyVisible) {
+        // If element is already in or near viewport, show immediately without delay
+        const isNearOrInViewport = rect.top < window.innerHeight + 80 && rect.bottom > -80
+        if (isNearOrInViewport) {
           el.classList.add('pop-in')
         } else {
           el.classList.add('pop-init')
@@ -55,9 +54,15 @@ export function ScrollPopObserver() {
       })
     }
 
-    // Initial scan + slight delay for hydrated content
+    // Initial scan + safety net reveals
     scanAndObserve()
-    const t = setTimeout(scanAndObserve, 400)
+    const t1 = setTimeout(scanAndObserve, 200)
+    // Safety net: reveal all elements so nothing is ever stuck invisible
+    const t2 = setTimeout(() => {
+      document.querySelectorAll('[data-pop]:not(.pop-in)').forEach((el) => {
+        el.classList.add('pop-in')
+      })
+    }, 1200)
 
     // Catch dynamically injected content (modals, drawers, lists)
     const mutObserver = new MutationObserver(() => {
@@ -68,7 +73,8 @@ export function ScrollPopObserver() {
     return () => {
       observer.disconnect()
       mutObserver.disconnect()
-      clearTimeout(t)
+      clearTimeout(t1)
+      clearTimeout(t2)
     }
   }, [pathname])
 
