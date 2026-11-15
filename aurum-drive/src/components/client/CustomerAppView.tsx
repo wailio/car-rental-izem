@@ -293,19 +293,19 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
                 <div className="text-[13px] font-black text-[#111827] leading-none mb-0.5">
                   IZEM MOTORS
                 </div>
-                <div className="text-[10px] font-medium text-[#6B7280]">
-                  Location en cours
+                <div className="text-[10.5px] font-medium text-[#6B7280]">
+                  Aéroport d&apos;Alger
                 </div>
               </div>
             </div>
 
-            {/* Right: Bell with notification dot + Client Avatar Initials */}
-            <div className="flex items-center gap-2.5">
-              <div className="relative w-8 h-8 rounded-full bg-white border border-black/[0.08] flex items-center justify-center shadow-sm">
-                <Bell className="w-4 h-4 text-[#4B5563]" />
-                <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#EF4444]" />
+            {/* Right: "Véhicule prêt" Pill + Client Avatar Initials */}
+            <div className="flex items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#E2F4F4] border border-[#0D6D70]/20 text-[#0D6D70] text-[11px] font-semibold tracking-tight shadow-xs">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#0D6D70]" />
+                <span>Véhicule prêt</span>
               </div>
-              <div className="w-8 h-8 rounded-full bg-[#111827] text-white flex items-center justify-center text-[11px] font-bold tracking-tight shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-[#111827] text-white flex items-center justify-center text-[11px] font-bold tracking-tight shadow-sm flex-shrink-0">
                 {initials}
               </div>
             </div>
