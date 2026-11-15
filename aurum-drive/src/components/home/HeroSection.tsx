@@ -263,39 +263,43 @@ export function HeroSection() {
               {/* Col 1: Full Name / Nom complet (Entire slot clickable) */}
               <div
                 onClick={() => nameInputRef.current?.focus()}
-                className="rentgo-booking-col group cursor-pointer hover:bg-white/[0.05] transition-all duration-200 rounded-xl py-1.5 px-3.5"
+                className="rentgo-booking-col group cursor-pointer"
                 title="Cliquer pour renseigner votre nom"
               >
-                <label className="rentgo-booking-label cursor-pointer select-none">
-                  Nom complet
-                </label>
-                <input
-                  ref={nameInputRef}
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Votre nom"
-                  className="rentgo-booking-input w-full focus:outline-none placeholder:text-white/40"
-                />
+                <div className="rounded-xl py-1.5 px-3 transition-colors duration-200 group-hover:bg-white/[0.06] -mx-1">
+                  <label className="rentgo-booking-label cursor-pointer select-none whitespace-nowrap">
+                    Nom complet
+                  </label>
+                  <input
+                    ref={nameInputRef}
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Votre nom"
+                    className="rentgo-booking-input w-full focus:outline-none placeholder:text-white/45"
+                  />
+                </div>
               </div>
 
               {/* Col 2: Mobile Number / Téléphone mobile (Entire slot clickable) */}
               <div
                 onClick={() => phoneInputRef.current?.focus()}
-                className="rentgo-booking-col group cursor-pointer hover:bg-white/[0.05] transition-all duration-200 rounded-xl py-1.5 px-3.5"
+                className="rentgo-booking-col group cursor-pointer"
                 title="Cliquer pour renseigner votre numéro de téléphone"
               >
-                <label className="rentgo-booking-label cursor-pointer select-none">
-                  Téléphone mobile
-                </label>
-                <input
-                  ref={phoneInputRef}
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="0550 12 34 56"
-                  className="rentgo-booking-input w-full focus:outline-none placeholder:text-white/40"
-                />
+                <div className="rounded-xl py-1.5 px-3 transition-colors duration-200 group-hover:bg-white/[0.06] -mx-1">
+                  <label className="rentgo-booking-label cursor-pointer select-none whitespace-nowrap">
+                    Téléphone mobile
+                  </label>
+                  <input
+                    ref={phoneInputRef}
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="0550 12 34 56"
+                    className="rentgo-booking-input w-full focus:outline-none placeholder:text-white/45"
+                  />
+                </div>
               </div>
 
               {/* Col 3: Pickup Location / Lieu de retrait (iOS Glassy Options Dropdown) */}
@@ -304,23 +308,25 @@ export function HeroSection() {
                   setIsLocationOpen((prev) => !prev);
                   setIsCalendarOpen(false);
                 }}
-                className="rentgo-booking-col group cursor-pointer hover:bg-white/[0.05] transition-all duration-200 rounded-xl py-1.5 px-3.5 relative"
+                className="rentgo-booking-col group cursor-pointer relative"
                 title="Cliquer pour choisir le lieu de retrait"
               >
-                <div className="flex items-center justify-between">
-                  <label className="rentgo-booking-label cursor-pointer select-none">
-                    Lieu de retrait
-                  </label>
-                  <ChevronDown
-                    size={13}
-                    className={`text-white/50 transition-transform duration-300 ${
-                      isLocationOpen ? "rotate-180 text-[#0B7584]" : "group-hover:text-white/80"
-                    }`}
-                  />
-                </div>
-                <div className="rentgo-booking-input truncate font-medium text-white flex items-center gap-1.5 select-none pt-0.5">
-                  <MapPin size={13} className="text-[#0B7584] shrink-0" />
-                  <span className="truncate">{location}</span>
+                <div className="rounded-xl py-1.5 px-3 transition-colors duration-200 group-hover:bg-white/[0.06] -mx-1">
+                  <div className="flex items-center justify-between">
+                    <label className="rentgo-booking-label cursor-pointer select-none whitespace-nowrap">
+                      Lieu de retrait
+                    </label>
+                    <ChevronDown
+                      size={13}
+                      className={`text-white/50 transition-transform duration-300 ${
+                        isLocationOpen ? "rotate-180 text-[#0B7584]" : "group-hover:text-white/80"
+                      }`}
+                    />
+                  </div>
+                  <div className="rentgo-booking-input truncate font-medium text-white flex items-center gap-1.5 select-none pt-0.5">
+                    <MapPin size={13} className="text-[#0B7584] shrink-0" />
+                    <span className="truncate">{location}</span>
+                  </div>
                 </div>
 
                 {/* iOS Glassy Slide Dropdown */}
@@ -339,22 +345,24 @@ export function HeroSection() {
                   setIsCalendarOpen((prev) => !prev);
                   setIsLocationOpen(false);
                 }}
-                className="rentgo-booking-col group cursor-pointer hover:bg-white/[0.05] transition-all duration-200 rounded-xl py-1.5 px-3.5 relative"
+                className="rentgo-booking-col group cursor-pointer relative"
                 title="Cliquer pour ouvrir le calendrier et choisir l'heure"
               >
-                <label className="rentgo-booking-label cursor-pointer select-none">
-                  Date de retrait
-                </label>
-                <div className="rentgo-booking-input flex items-center justify-between gap-1.5 select-none pt-0.5">
-                  <span className={date ? "text-white font-medium truncate" : "text-white/40 font-normal"}>
-                    {date ? formatDisplayDate(date, time) : "jj/mm/aaaa"}
-                  </span>
-                  <CalendarIcon
-                    size={14}
-                    className={`text-white/50 transition-colors shrink-0 ${
-                      isCalendarOpen ? "text-[#0B7584]" : "group-hover:text-white/80"
-                    }`}
-                  />
+                <div className="rounded-xl py-1.5 px-3 transition-colors duration-200 group-hover:bg-white/[0.06] -mx-1">
+                  <label className="rentgo-booking-label cursor-pointer select-none whitespace-nowrap">
+                    Date de retrait
+                  </label>
+                  <div className="rentgo-booking-input flex items-center justify-between gap-1.5 select-none pt-0.5">
+                    <span className={date ? "text-white font-medium truncate" : "text-white/45 font-normal"}>
+                      {date ? formatDisplayDate(date, time) : "jj/mm/aaaa"}
+                    </span>
+                    <CalendarIcon
+                      size={14}
+                      className={`text-white/50 transition-colors shrink-0 ${
+                        isCalendarOpen ? "text-[#0B7584]" : "group-hover:text-white/80"
+                      }`}
+                    />
+                  </div>
                 </div>
 
                 {/* iOS Glassy Calendar + Time Picker Popover */}

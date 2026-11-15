@@ -382,7 +382,7 @@ body {
 
 .rentgo-booking-col {
   flex: 1;
-  padding: 0 22px;
+  padding: 0 16px;
   border-right: 1px solid rgba(255, 255, 255, 0.14);
   display: flex;
   flex-direction: column;
