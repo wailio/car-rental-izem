@@ -342,21 +342,19 @@ export function HeroSection() {
                 className="rentgo-booking-col group cursor-pointer hover:bg-white/[0.05] transition-all duration-200 rounded-xl py-1.5 px-3.5 relative"
                 title="Cliquer pour ouvrir le calendrier et choisir l'heure"
               >
-                <div className="flex items-center justify-between">
-                  <label className="rentgo-booking-label cursor-pointer select-none">
-                    Date de retrait
-                  </label>
+                <label className="rentgo-booking-label cursor-pointer select-none">
+                  Date de retrait
+                </label>
+                <div className="rentgo-booking-input flex items-center justify-between gap-1.5 select-none pt-0.5">
+                  <span className={date ? "text-white font-medium truncate" : "text-white/40 font-normal"}>
+                    {date ? formatDisplayDate(date, time) : "jj/mm/aaaa"}
+                  </span>
                   <CalendarIcon
-                    size={13}
-                    className={`text-white/50 transition-colors ${
+                    size={14}
+                    className={`text-white/50 transition-colors shrink-0 ${
                       isCalendarOpen ? "text-[#0B7584]" : "group-hover:text-white/80"
                     }`}
                   />
-                </div>
-                <div className="rentgo-booking-input truncate font-medium flex items-center gap-1.5 select-none pt-0.5">
-                  <span className={date ? "text-white" : "text-white/40"}>
-                    {formatDisplayDate(date, time)}
-                  </span>
                 </div>
 
                 {/* iOS Glassy Calendar + Time Picker Popover */}
