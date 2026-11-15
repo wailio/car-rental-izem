@@ -36,27 +36,17 @@ const STEPS: StepItem[] = [
 
 export function HowItWorksSection() {
   const [isRevealed, setIsRevealed] = useState(false);
-  const [trackWidth, setTrackWidth] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
 
-    const updateTrack = () => {
-      if (trackRef.current) {
-        setTrackWidth(trackRef.current.offsetWidth);
-      }
-    };
-    updateTrack();
-    window.addEventListener("resize", updateTrack);
-
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setIsRevealed(true);
       setActiveStep(4);
-      return () => window.removeEventListener("resize", updateTrack);
+      return;
     }
 
     const observer = new IntersectionObserver(
@@ -80,10 +70,7 @@ export function HowItWorksSection() {
     );
 
     observer.observe(el);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", updateTrack);
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -113,7 +100,7 @@ export function HowItWorksSection() {
         }}
       />
 
-      {/* One faint radial glow (accent at 6%, max 500px wide) centered behind track */}
+      {/* One faint radial glow (accent at 6%, max 500px wide) centered behind steps */}
       <div
         aria-hidden="true"
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[260px] rounded-full pointer-events-none z-0"
@@ -164,50 +151,6 @@ export function HowItWorksSection() {
 
       {/* ── Desktop Timeline (4 Equal Columns, Gap 24px) ── */}
       <div className="hidden md:block relative z-10">
-        {/* Continuous 1px Track behind the circles from center of circle 1 to center of circle 4 */}
-        <div
-          ref={trackRef}
-          aria-hidden="true"
-          className="absolute h-[1px] pointer-events-none z-0"
-          style={{
-            top: 24, // vertical center of 48px circle
-            left: "calc((100% - 72px) / 8)",
-            right: "calc((100% - 72px) / 8)",
-          }}
-        >
-          {/* Base gradient track */}
-          <div
-            className="w-full h-full"
-            style={{
-              background:
-                "linear-gradient(90deg, rgba(11,117,132,0.18), rgba(11,117,132,0.35), rgba(11,117,132,0.18))",
-            }}
-          />
-
-          {/* Accent progress line (1.5px, scaleX 0 to 1) */}
-          <div
-            className="absolute top-1/2 left-0 w-full h-[1.5px] -translate-y-1/2 origin-left pointer-events-none"
-            style={{
-              backgroundColor: "#0B7584",
-              transform: isRevealed ? "scaleX(1)" : "scaleX(0)",
-              transition: "transform 1.2s cubic-bezier(0.65, 0, 0.35, 1)",
-            }}
-          />
-
-          {/* Small travelling dot: 6px, accent, halo shadow, rides leading edge, fades out at end */}
-          <div
-            className="absolute top-1/2 left-0 w-1.5 h-1.5 -mt-[3px] -ml-[3px] rounded-full pointer-events-none"
-            style={{
-              backgroundColor: "#0B7584",
-              boxShadow: "0 0 0 5px rgba(11, 117, 132, 0.14)",
-              transform: isRevealed ? `translateX(${trackWidth}px)` : "translateX(0)",
-              opacity: isRevealed ? (activeStep >= 4 ? 0 : 1) : 1,
-              transition: "transform 1.2s cubic-bezier(0.65, 0, 0.35, 1), opacity 300ms ease 1.15s",
-            }}
-          />
-        </div>
-
-        {/* 4 Equal Columns Grid */}
         <div className="grid grid-cols-4 gap-6 text-center">
           {STEPS.map((step, i) => {
             const isStepActive = activeStep >= i + 1;
@@ -239,6 +182,69 @@ export function HowItWorksSection() {
                     {step.num}
                   </span>
                 </div>
+
+                {/* Timeline connector segment: begins at right side of circle i, ends at left side of circle i+1 (NEVER passes through circle) */}
+                {i < STEPS.length - 1 && (
+                  <div
+                    aria-hidden="true"
+                    className="absolute h-[1.5px] pointer-events-none z-0"
+                    style={{
+                      top: 24, // vertical center of 48px circle
+                      left: "calc(50% + 24px + 4px)", // starts 4px outside circle i
+                      width: "calc(100% - 32px)",     // spans across gap, stops 4px before circle i+1
+                    }}
+                  >
+                    {/* Base gradient track */}
+                    <div
+                      className="w-full h-[1px] absolute top-1/2 -translate-y-1/2 left-0"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, rgba(11,117,132,0.18), rgba(11,117,132,0.35), rgba(11,117,132,0.18))",
+                      }}
+                    />
+
+                    {/* Active accent progress line */}
+                    <div
+                      className="w-full h-[1.5px] absolute top-1/2 -translate-y-1/2 left-0 origin-left"
+                      style={{
+                        backgroundColor: "#0B7584",
+                        transform:
+                          activeStep >= i + 2
+                            ? "scaleX(1)"
+                            : activeStep === i + 1
+                            ? "scaleX(1)"
+                            : "scaleX(0)",
+                        transition: `transform 400ms cubic-bezier(0.65, 0, 0.35, 1) ${
+                          i * 400
+                        }ms`,
+                      }}
+                    />
+
+                    {/* Small travelling dot riding the leading edge */}
+                    <div
+                      className="absolute top-1/2 -mt-[3px] -ml-[3px] w-1.5 h-1.5 rounded-full pointer-events-none"
+                      style={{
+                        backgroundColor: "#0B7584",
+                        boxShadow: "0 0 0 5px rgba(11, 117, 132, 0.14)",
+                        left:
+                          activeStep >= i + 2
+                            ? "100%"
+                            : activeStep === i + 1
+                            ? "100%"
+                            : "0%",
+                        opacity:
+                          activeStep >= 4
+                            ? 0
+                            : activeStep >= i + 1
+                            ? 1
+                            : 0,
+                        transition: `left 400ms cubic-bezier(0.65, 0, 0.35, 1) ${
+                          i * 400
+                        }ms, opacity 200ms ease`,
+                      }}
+                    />
+                  </div>
+                )}
 
                 {/* Step title & description */}
                 <div
@@ -285,26 +291,6 @@ export function HowItWorksSection() {
 
       {/* ── Mobile Vertical Timeline (under 768px) ── */}
       <div className="md:hidden relative z-10">
-        {/* Continuous vertical track at x = 20px */}
-        <div
-          aria-hidden="true"
-          className="absolute left-[20px] top-[20px] bottom-[20px] w-[1.5px] -translate-x-1/2 pointer-events-none z-0"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(11,117,132,0.18), rgba(11,117,132,0.35), rgba(11,117,132,0.18))",
-          }}
-        >
-          <div
-            className="w-full h-full origin-top pointer-events-none"
-            style={{
-              backgroundColor: "#0B7584",
-              transform: isRevealed ? "scaleY(1)" : "scaleY(0)",
-              transition: "transform 1.2s cubic-bezier(0.65, 0, 0.35, 1)",
-            }}
-          />
-        </div>
-
-        {/* Vertical Steps */}
         <div className="space-y-7">
           {STEPS.map((step, i) => {
             const isStepActive = activeStep >= i + 1;
@@ -321,27 +307,64 @@ export function HowItWorksSection() {
                   }ms, transform 600ms cubic-bezier(0.22, 1, 0.36, 1) ${250 + i * 80}ms`,
                 }}
               >
-                {/* 40px Circle Node */}
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 relative z-10 transition-all duration-300"
-                  style={{
-                    border: "1.5px solid #0B7584",
-                    backgroundColor: isStepActive ? "rgba(11, 117, 132, 0.10)" : "#FFFFFF",
-                    boxShadow: isStepActive ? "0 0 0 5px rgba(11, 117, 132, 0.08)" : "none",
-                  }}
-                >
-                  <span
+                {/* 40px Circle Node with connector segment underneath to next circle */}
+                <div className="relative shrink-0">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center relative z-10 transition-all duration-300"
                     style={{
-                      fontFamily: "ui-monospace, 'SF Mono', monospace",
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: "#0B7584",
-                      letterSpacing: "0.06em",
-                      lineHeight: 1,
+                      border: "1.5px solid #0B7584",
+                      backgroundColor: isStepActive ? "rgba(11, 117, 132, 0.10)" : "#FFFFFF",
+                      boxShadow: isStepActive ? "0 0 0 5px rgba(11, 117, 132, 0.08)" : "none",
                     }}
                   >
-                    {step.num}
-                  </span>
+                    <span
+                      style={{
+                        fontFamily: "ui-monospace, 'SF Mono', monospace",
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: "#0B7584",
+                        letterSpacing: "0.06em",
+                        lineHeight: 1,
+                      }}
+                    >
+                      {step.num}
+                    </span>
+                  </div>
+
+                  {/* Vertical connector: starts at bottom of circle i, ends at top of circle i+1 (NEVER passes through circle) */}
+                  {i < STEPS.length - 1 && (
+                    <div
+                      aria-hidden="true"
+                      className="absolute left-1/2 -translate-x-1/2 top-[44px] w-[1.5px] pointer-events-none z-0"
+                      style={{
+                        height: "calc(100% + 28px - 48px)",
+                        minHeight: 22,
+                      }}
+                    >
+                      <div
+                        className="w-full h-full"
+                        style={{
+                          background:
+                            "linear-gradient(180deg, rgba(11,117,132,0.18), rgba(11,117,132,0.35), rgba(11,117,132,0.18))",
+                        }}
+                      />
+                      <div
+                        className="w-full h-full origin-top"
+                        style={{
+                          backgroundColor: "#0B7584",
+                          transform:
+                            activeStep >= i + 2
+                              ? "scaleY(1)"
+                              : activeStep === i + 1
+                              ? "scaleY(1)"
+                              : "scaleY(0)",
+                          transition: `transform 400ms cubic-bezier(0.65, 0, 0.35, 1) ${
+                            i * 400
+                          }ms`,
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Left-aligned text */}
