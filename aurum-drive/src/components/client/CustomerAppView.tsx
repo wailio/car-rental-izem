@@ -110,7 +110,7 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
 
   return (
     <div
-      className="relative w-full h-full overflow-hidden select-none flex flex-col"
+      className="relative w-full h-full overflow-hidden select-none"
       style={{
         background: '#F7F5F0', // Clean warm ivory iOS background throughout
         color: '#1C1C1E',
@@ -132,191 +132,202 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
         }
       `}</style>
 
-      {/* ── FIXED TOP IOS HEADER BAR (ALWAYS FIXED, NEVER JUMPS OR GLITCHES) ── */}
-      <header
-        className="flex-shrink-0 z-30 w-full px-5 pb-3 bg-[#F7F5F0]/95 backdrop-blur-md border-b border-black/[0.04]"
+      {/* ══════════════════════════════════════════════════════════════════════
+          SCREEN 1 : IMMERSIVE WELCOME & IDENTIFICATION (NO TOP BAR, FULL BLEED UP)
+          ══════════════════════════════════════════════════════════════════════ */}
+      <div
+        className="absolute inset-0 w-full h-full overflow-y-auto overscroll-contain transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between"
         style={{
-          paddingTop: isMockup ? '16px' : 'calc(env(safe-area-inset-top, 0px) + 14px)',
+          transform: screen === 'welcome' ? 'translateX(0%)' : 'translateX(-100%)',
+          opacity: screen === 'welcome' ? 1 : 0,
+          pointerEvents: screen === 'welcome' ? 'auto' : 'none',
+          visibility: screen === 'welcome' ? 'visible' : 'hidden',
+          WebkitOverflowScrolling: 'touch',
+          background: '#F7F5F0',
         }}
       >
-        <div className="flex items-center justify-between">
-          {/* Left: Brand Lockup / Return Action */}
-          <div className="flex items-center gap-2.5">
-            <button
-              type="button"
-              onClick={() => {
-                if (screen === 'dashboard') setScreen('welcome')
+        <div>
+          {/* Top Hero Image bringing the whole page up into the space */}
+          <div className="relative w-full h-[255px] flex-shrink-0 overflow-hidden bg-[#F7F5F0]">
+            <img
+              src="/images/fleet-sunset.jpg"
+              alt="Flotte IZEM MOTORS au coucher du soleil"
+              className="w-full h-full object-cover object-center"
+            />
+            {/* Top and Bottom gentle transitions into #F7F5F0 */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  'linear-gradient(to bottom, rgba(247,245,240,0.5) 0%, rgba(247,245,240,0) 20%, rgba(247,245,240,0.4) 62%, rgba(247,245,240,0.92) 88%, #F7F5F0 100%)',
               }}
-              className={`w-10 h-10 rounded-2xl bg-[#0D6D70] border border-[#0D6D70]/20 flex items-center justify-center shadow-sm p-1 transition-all flex-shrink-0 ${
-                screen === 'dashboard' ? 'cursor-pointer hover:opacity-90 active:scale-95' : 'cursor-default'
-              }`}
-              title={screen === 'dashboard' ? "Revenir à l'accueil" : "IZEM MOTORS"}
-            >
-              <img
-                src="/images/izem-emblem.png"
-                alt="IZEM MOTORS"
-                className="w-full h-full object-contain filter drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]"
-              />
-            </button>
-            <div>
-              <div className="text-[13px] font-black text-[#111827] leading-none mb-0.5">
-                IZEM MOTORS
+            />
+          </div>
+
+          {/* Body Content below the fade */}
+          <div className="px-6 -mt-8 relative z-10">
+            {/* Official IZEM MOTORS Brand Lockup with Teal Squircle and Chrome Lion Emblem */}
+            <div className="flex items-center gap-3 mb-3.5">
+              <div className="w-12 h-12 rounded-2xl bg-[#0D6D70] border border-[#0D6D70]/20 flex items-center justify-center shadow-md p-1.5 overflow-hidden flex-shrink-0">
+                <img
+                  src="/images/izem-emblem.png"
+                  alt="IZEM MOTORS"
+                  className="w-full h-full object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
+                />
               </div>
-              <div className="text-[10px] font-medium text-[#6B7280]">
-                {screen === 'welcome' ? "Aéroport d'Alger" : "Location en cours"}
+              <div>
+                <h2 className="text-[16px] font-black tracking-tight text-[#111827] leading-none mb-0.5">
+                  IZEM MOTORS
+                </h2>
+                <p className="text-[11px] font-medium text-[#0D6D70] tracking-wide">
+                  Location de Voitures · Alger
+                </p>
+              </div>
+            </div>
+
+            {/* Big Headline */}
+            <h1 className="text-[26px] font-extrabold text-[#111827] tracking-tight leading-[1.18] mb-2">
+              Votre véhicule vous attend.
+            </h1>
+
+            {/* Explanatory subtitle */}
+            <p className="text-[13px] text-[#4B5563] leading-relaxed mb-4 font-normal">
+              Contrat validé, véhicule préparé et disponible pour votre séjour en Algérie.
+            </p>
+
+            {/* Auto-filled Client Name Field (No user input requested) */}
+            <div className="bg-white rounded-2xl p-3.5 mb-3.5 border border-black/[0.07] shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#8E8E93]">
+                  Conducteur enregistré
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#0D6D70] bg-[#E6F4F4] px-2 py-0.5 rounded-full">
+                  <Check className="w-2.5 h-2.5 stroke-[3]" />
+                  Contrat actif
+                </span>
+              </div>
+              <div className="text-[17px] font-bold text-[#111827] tracking-tight">
+                {activeClientName}
+              </div>
+            </div>
+
+            {/* Assigned Vehicle Preview Card */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-3 mb-4 border border-black/[0.05] flex items-center gap-3">
+              <div className="w-12 h-10 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 relative">
+                <img
+                  src={car.image}
+                  alt={car.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[13px] font-bold text-[#111827] truncate">
+                  {car.name}
+                </div>
+                <div className="text-[11px] text-[#6B7280] font-mono">
+                  Immatriculation : {car.plate}
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Right: Notifications & User Circle Initials */}
-          <div className="flex items-center gap-2.5">
-            {screen === 'dashboard' ? (
+        {/* Bottom Actions with Smooth Transition Trigger */}
+        <div className="px-6 pb-6 pt-2 space-y-3">
+          <button
+            type="button"
+            onClick={() => setScreen('dashboard')}
+            className="w-full py-3.5 px-6 rounded-2xl bg-[#2DD4BF] hover:bg-[#14B8A6] active:scale-[0.98] text-[#042F2E] font-bold text-[15px] tracking-tight transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(45,212,191,0.35)] cursor-pointer"
+          >
+            <span>C&apos;est moi</span>
+            <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+          </button>
+
+          <div className="flex items-center justify-center gap-2 text-[11.5px] text-[#4B5563] font-medium py-1">
+            <ShieldCheck className="w-4 h-4 text-[#0D6D70]" />
+            <span>Session sécurisée · Clé digitale vérifiée</span>
+          </div>
+
+          <p className="text-[10px] text-center text-[#9CA3AF] leading-tight">
+            IZEM MOTORS · Remise aéroportuaire 24/7 sans formalité d&apos;attente.
+          </p>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          SCREEN 2 : STATS & REAL-TIME TRACKING DASHBOARD (FIXED TOP HEADER)
+          ══════════════════════════════════════════════════════════════════════ */}
+      <div
+        className="absolute inset-0 w-full h-full flex flex-col overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]"
+        style={{
+          transform: screen === 'dashboard' ? 'translateX(0%)' : 'translateX(100%)',
+          opacity: screen === 'dashboard' ? 1 : 0,
+          pointerEvents: screen === 'dashboard' ? 'auto' : 'none',
+          visibility: screen === 'dashboard' ? 'visible' : 'hidden',
+          background: '#F7F5F0',
+        }}
+      >
+        {/* ── FIXED TOP IOS HEADER BAR ON SCREEN 2 (NEVER SCROLLS, NEVER GLITCHES) ── */}
+        <div
+          className="flex-shrink-0 z-30 w-full px-5 pb-3 bg-[#F7F5F0]/95 backdrop-blur-md border-b border-black/[0.04]"
+          style={{
+            paddingTop: isMockup ? '20px' : 'calc(env(safe-area-inset-top, 0px) + 16px)',
+          }}
+        >
+          <div className="flex items-center justify-between">
+            {/* Left: Brand Lockup / Return Action */}
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => setScreen('welcome')}
+                className="w-10 h-10 rounded-2xl bg-[#0D6D70] border border-[#0D6D70]/20 flex items-center justify-center shadow-sm p-1 cursor-pointer hover:opacity-90 active:scale-95 transition-all flex-shrink-0"
+                title="Revenir à l'accueil"
+              >
+                <img
+                  src="/images/izem-emblem.png"
+                  alt="IZEM MOTORS"
+                  className="w-full h-full object-contain filter drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]"
+                />
+              </button>
+              <div>
+                <div className="text-[13px] font-black text-[#111827] leading-none mb-0.5">
+                  IZEM MOTORS
+                </div>
+                <div className="text-[10px] font-medium text-[#6B7280]">
+                  Location en cours
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Bell with notification dot + Client Avatar Initials */}
+            <div className="flex items-center gap-2.5">
               <div className="relative w-8 h-8 rounded-full bg-white border border-black/[0.08] flex items-center justify-center shadow-sm">
                 <Bell className="w-4 h-4 text-[#4B5563]" />
                 <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#EF4444]" />
               </div>
-            ) : (
-              <div className="inline-flex items-center gap-1 text-[10px] font-bold text-[#0D6D70] bg-[#E6F4F4] px-2.5 py-1 rounded-full border border-[#0D6D70]/15 shadow-2xs">
-                <ShieldCheck className="w-3 h-3 text-[#0D6D70]" />
-                <span>Véhicule prêt</span>
+              <div className="w-8 h-8 rounded-full bg-[#111827] text-white flex items-center justify-center text-[11px] font-bold tracking-tight shadow-sm">
+                {initials}
               </div>
-            )}
-            <div className="w-8 h-8 rounded-full bg-[#111827] text-white flex items-center justify-center text-[11px] font-bold tracking-tight shadow-sm">
-              {initials}
             </div>
           </div>
         </div>
-      </header>
 
-      {/* ── SCREEN VIEWPORT CONTAINER: ONLY CONTENT SLIDES & SCROLLS ── */}
-      <div className="relative flex-1 w-full overflow-hidden">
-        {/* ══════════════════════════════════════════════════════════════════════
-            SCREEN 1 : WELCOME & AUTOMATIC CLIENT IDENTIFICATION
-            ══════════════════════════════════════════════════════════════════════ */}
+        {/* ── MAIN DASHBOARD SCROLLABLE BODY (ONLY THIS SCROLLS) ── */}
         <div
-          className="absolute inset-0 w-full h-full overflow-y-auto overscroll-contain transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col justify-between"
+          className="flex-1 overflow-y-auto overscroll-contain px-5 pt-3 pb-12 space-y-3.5"
           style={{
-            transform: screen === 'welcome' ? 'translateX(0%)' : 'translateX(-100%)',
-            opacity: screen === 'welcome' ? 1 : 0,
-            pointerEvents: screen === 'welcome' ? 'auto' : 'none',
-            visibility: screen === 'welcome' ? 'visible' : 'hidden',
             WebkitOverflowScrolling: 'touch',
-            background: '#F7F5F0',
           }}
         >
+          {/* Greeting */}
           <div>
-            {/* Top Hero Image with Soft Bottom Fade into #F7F5F0 */}
-            <div className="relative w-full h-[195px] flex-shrink-0 overflow-hidden bg-[#F7F5F0]">
-              <img
-                src="/images/fleet-sunset.jpg"
-                alt="Flotte IZEM MOTORS au coucher du soleil"
-                className="w-full h-full object-cover object-center"
-              />
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background:
-                    'linear-gradient(to bottom, rgba(247,245,240,0) 30%, rgba(247,245,240,0.55) 72%, #F7F5F0 100%)',
-                }}
-              />
+            <div className="text-[12px] font-medium text-[#6B7280]">
+              Bonjour, {firstName}
             </div>
-
-            {/* Body Content below the image */}
-            <div className="px-6 pt-2 relative z-10">
-              {/* Big Headline */}
-              <h1 className="text-[25px] font-extrabold text-[#111827] tracking-tight leading-[1.18] mb-1.5">
-                Votre véhicule vous attend.
-              </h1>
-
-              {/* Explanatory subtitle */}
-              <p className="text-[12.5px] text-[#4B5563] leading-relaxed mb-4 font-normal">
-                Contrat validé, véhicule préparé et disponible pour votre séjour en Algérie.
-              </p>
-
-              {/* Auto-filled Client Name Field (No user input requested) */}
-              <div className="bg-white rounded-2xl p-3.5 mb-3.5 border border-black/[0.07] shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] uppercase tracking-wider font-semibold text-[#8E8E93]">
-                    Conducteur enregistré
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-[#0D6D70] bg-[#E6F4F4] px-2 py-0.5 rounded-full">
-                    <Check className="w-2.5 h-2.5 stroke-[3]" />
-                    Contrat actif
-                  </span>
-                </div>
-                <div className="text-[17px] font-bold text-[#111827] tracking-tight">
-                  {activeClientName}
-                </div>
-              </div>
-
-              {/* Assigned Vehicle Preview Card */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-3 mb-4 border border-black/[0.05] flex items-center gap-3">
-                <div className="w-12 h-10 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 relative">
-                  <img
-                    src={car.image}
-                    alt={car.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[13px] font-bold text-[#111827] truncate">
-                    {car.name}
-                  </div>
-                  <div className="text-[11px] text-[#6B7280] font-mono">
-                    Immatriculation : {car.plate}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <h2 className="text-[22px] font-extrabold text-[#111827] tracking-tight leading-tight">
+              Votre location est active
+            </h2>
           </div>
-
-          {/* Bottom Actions with Smooth Transition Trigger */}
-          <div className="px-6 pb-6 pt-2 space-y-3">
-            <button
-              type="button"
-              onClick={() => setScreen('dashboard')}
-              className="w-full py-3.5 px-6 rounded-2xl bg-[#2DD4BF] hover:bg-[#14B8A6] active:scale-[0.98] text-[#042F2E] font-bold text-[15px] tracking-tight transition-all duration-200 flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(45,212,191,0.35)] cursor-pointer"
-            >
-              <span>C&apos;est moi</span>
-              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-            </button>
-
-            <div className="flex items-center justify-center gap-2 text-[11.5px] text-[#4B5563] font-medium py-1">
-              <ShieldCheck className="w-4 h-4 text-[#0D6D70]" />
-              <span>Session sécurisée · Clé digitale vérifiée</span>
-            </div>
-
-            <p className="text-[10px] text-center text-[#9CA3AF] leading-tight">
-              IZEM MOTORS · Remise aéroportuaire 24/7 sans formalité d&apos;attente.
-            </p>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════════════════
-            SCREEN 2 : STATS & REAL-TIME TRACKING DASHBOARD
-            ══════════════════════════════════════════════════════════════════════ */}
-        <div
-          className="absolute inset-0 w-full h-full overflow-y-auto overscroll-contain transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] flex flex-col"
-          style={{
-            transform: screen === 'dashboard' ? 'translateX(0%)' : 'translateX(100%)',
-            opacity: screen === 'dashboard' ? 1 : 0,
-            pointerEvents: screen === 'dashboard' ? 'auto' : 'none',
-            visibility: screen === 'dashboard' ? 'visible' : 'hidden',
-            WebkitOverflowScrolling: 'touch',
-            background: '#F7F5F0',
-          }}
-        >
-          {/* ── MAIN DASHBOARD SCROLLABLE BODY ── */}
-          <div className="flex-1 px-5 pt-3 pb-12 space-y-3.5">
-            {/* Greeting */}
-            <div>
-              <div className="text-[12px] font-medium text-[#6B7280]">
-                Bonjour, {firstName}
-              </div>
-              <h2 className="text-[22px] font-extrabold text-[#111827] tracking-tight leading-tight">
-                Votre location est active
-              </h2>
-            </div>
 
             {/* ── THE HERO VEHICLE SHAPE (CLEAN ASYMMETRICAL STRUCTURE) ─────────── */}
             <div
@@ -588,7 +599,6 @@ export function CustomerAppView({ car, isMockup = false }: CustomerAppViewProps)
             </div>
           </div>
         </div>
-      </div>
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════════
