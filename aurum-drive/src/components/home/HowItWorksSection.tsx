@@ -1,282 +1,238 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 
 const SF = "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif";
 
-const STEPS = [
+interface StepItem {
+  num: string;
+  title: string;
+  desc: string;
+}
+
+const STEPS: StepItem[] = [
   {
     num: "01",
     title: "Choisissez votre véhicule",
-    shortDesc: "Parcourez la flotte et sélectionnez vos dates.",
     desc: "Parcourez notre flotte, sélectionnez vos dates de location et votre lieu de remise.",
   },
   {
     num: "02",
     title: "Transmettez votre demande",
-    shortDesc: "Trois minutes en ligne, aucun paiement bancaire.",
     desc: "Trois minutes suffisent en ligne. Aucun paiement par carte bancaire requis.",
   },
   {
     num: "03",
     title: "Confirmation rapide",
-    shortDesc: "Validation directe par téléphone ou WhatsApp.",
     desc: "Un conseiller vous contacte par téléphone ou WhatsApp pour valider la réservation.",
   },
   {
     num: "04",
     title: "Prenez la route",
-    shortDesc: "Retrait à l'aéroport ou agence, règlement sur place.",
     desc: "Retrait à l'aéroport Houari Boumediene ou à l'agence. Règlement et caution sur place.",
   },
 ];
 
 export function HowItWorksSection() {
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [trackWidth, setTrackWidth] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
+
+    const updateTrack = () => {
+      if (trackRef.current) {
+        setTrackWidth(trackRef.current.offsetWidth);
+      }
+    };
+    updateTrack();
+    window.addEventListener("resize", updateTrack);
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setIsRevealed(true);
+      setActiveStep(4);
+      return () => window.removeEventListener("resize", updateTrack);
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          el.classList.add("hiw-visible");
-          observer.disconnect();
+          setIsRevealed(true);
+          setActiveStep(1);
+          const t1 = setTimeout(() => setActiveStep(2), 400);
+          const t2 = setTimeout(() => setActiveStep(3), 800);
+          const t3 = setTimeout(() => setActiveStep(4), 1200);
+
+          observer.unobserve(entry.target);
+          return () => {
+            clearTimeout(t1);
+            clearTimeout(t2);
+            clearTimeout(t3);
+          };
         }
       },
-      { threshold: 0.25 }
+      { threshold: 0.3 }
     );
+
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateTrack);
+    };
   }, []);
 
   return (
-    <>
-      <style>{`
-        /* Desktop styles (100% untouched) */
-        .hiw-step-circle {
-          opacity: 0;
-          transform: translateY(12px);
-          transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1);
-        }
-        .hiw-step-text {
-          opacity: 0;
-          transform: translateY(8px);
-          transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1);
-        }
-        .hiw-connector-line::after {
-          content: '';
-          display: block;
-          height: 100%;
-          width: 0;
-          background: #0B7584;
-          transition: width 0.8s cubic-bezier(0.16,1,0.3,1);
-        }
-        .hiw-visible .hiw-step-circle {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        .hiw-visible .hiw-step-text {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        .hiw-visible .hiw-connector-line::after {
-          width: 100%;
-        }
-
-        /* ── Mobile Snake Animation ── */
-        .hiw-m-card {
-          opacity: 0;
-          transform: translateY(8px) scale(0.95);
-          transition: opacity 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .hiw-m-line-fill {
-          background: #0B7584;
-          position: absolute;
-          inset: 0;
-        }
-
-        /* Timing: 1 -> line1 -> 2 -> line2 -> 3 -> line3 -> 4 */
-        .hiw-visible .hiw-m-card-1 {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-          transition-delay: 0.1s;
-        }
-        .hiw-m-l1 {
-          width: 0;
-          transition: width 0.45s cubic-bezier(0.16,1,0.3,1) 0.5s;
-        }
-        .hiw-visible .hiw-m-l1 {
-          width: 100%;
-        }
-
-        .hiw-visible .hiw-m-card-2 {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-          transition-delay: 0.95s;
-        }
-        .hiw-m-l2 {
-          height: 0;
-          transition: height 0.45s cubic-bezier(0.16,1,0.3,1) 1.35s;
-        }
-        .hiw-visible .hiw-m-l2 {
-          height: 100%;
-        }
-
-        .hiw-visible .hiw-m-card-3 {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-          transition-delay: 1.8s;
-        }
-        .hiw-m-l3 {
-          width: 0;
-          transition: width 0.45s cubic-bezier(0.16,1,0.3,1) 2.2s;
-        }
-        .hiw-visible .hiw-m-l3 {
-          width: 100%;
-        }
-
-        .hiw-visible .hiw-m-card-4 {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-          transition-delay: 2.65s;
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .hiw-step-circle,
-          .hiw-step-text,
-          .hiw-m-card {
-            opacity: 1;
-            transform: none;
-            transition: none;
-          }
-          .hiw-connector-line::after,
-          .hiw-m-l1,
-          .hiw-m-l2,
-          .hiw-m-l3 {
-            width: 100% !important;
-            height: 100% !important;
-            transition: none;
-          }
-        }
-      `}</style>
-
-      <section
-        ref={sectionRef}
+    <section
+      ref={sectionRef}
+      id="comment-ca-marche"
+      className="relative w-full overflow-hidden"
+      style={{
+        fontFamily: SF,
+        maxWidth: 1280,
+        width: "calc(100% - clamp(24px, 4vw, 48px))",
+        margin: "clamp(48px, 6vw, 64px) auto clamp(60px, 8vw, 84px) auto",
+        backgroundColor: "#FFFFFF",
+        borderRadius: 28,
+        border: "1px solid rgba(11, 117, 132, 0.14)",
+        boxShadow: "0 1px 2px rgba(15,23,42,0.04), 0 20px 40px -20px rgba(15,23,42,0.10)",
+        padding: "clamp(32px, 4vw, 52px) clamp(22px, 4vw, 40px) clamp(32px, 4vw, 48px) clamp(22px, 4vw, 40px)",
+      }}
+    >
+      {/* 1px top-edge highlight with linear-gradient */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 left-0 right-0 h-[1px] pointer-events-none z-20"
         style={{
-          backgroundImage: "url('/images/howitworks-bg.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          borderRadius: 28,
-          border: "1px solid rgba(0,0,0,0.06)",
-          boxShadow: "0 4px 24px -4px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02)",
-          padding: "clamp(36px,6vw,72px) clamp(16px,4vw,44px)",
-          maxWidth: 1280,
-          width: "calc(100% - clamp(24px, 4vw, 48px))",
-          margin: "clamp(48px, 6vw, 64px) auto clamp(72px, 9vw, 100px) auto",
-          fontFamily: SF,
+          background:
+            "linear-gradient(90deg, transparent 0%, rgba(11, 117, 132, 0.5) 50%, transparent 100%)",
         }}
+      />
+
+      {/* One faint radial glow (accent at 6%, max 500px wide) centered behind track */}
+      <div
+        aria-hidden="true"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[260px] rounded-full pointer-events-none z-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(11, 117, 132, 0.06) 0%, transparent 70%)",
+        }}
+      />
+
+      {/* Absolutely positioned corner link on Desktop: 'Faire ma demande →' */}
+      <Link
+        href="#booking-box"
+        className="hidden md:inline-flex items-center gap-1.5 absolute top-[22px] right-[28px] text-[14px] font-semibold text-[#0B7584] group/corner z-20 no-underline"
       >
-        {/* Header */}
+        <span className="relative">
+          Faire ma demande
+          <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-[#0B7584] scale-x-0 group-hover/corner:scale-x-100 transition-transform duration-250 origin-left" />
+        </span>
+        <span className="group-hover/corner:translate-x-1 transition-transform duration-200">
+          →
+        </span>
+      </Link>
+
+      {/* ── Header (Eyebrow Pill + H2) ── */}
+      <div
+        className="text-center relative z-10 mx-auto"
+        style={{ marginBottom: 36 }}
+      >
         <div
+          data-pop="badge"
+          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-[0.08em] uppercase bg-[#0B7584]/[0.08] text-[#0B7584]"
+          style={{ marginBottom: 14 }}
+        >
+          PROCESSUS SIMPLE
+        </div>
+        <h2
           data-pop="up"
+          className="text-[#0F172A] tracking-[-0.025em] m-0 leading-[1.18]"
           style={{
-            marginBottom: "clamp(28px, 4vw, 52px)",
-            textAlign: "center",
-            maxWidth: 560,
-            marginLeft: "auto",
-            marginRight: "auto",
+            fontSize: "clamp(1.5rem, 3vw, 2.3rem)",
+            fontFamily: SF,
           }}
         >
+          <span style={{ fontWeight: 300 }}>Comment louer en </span>
+          <span style={{ fontWeight: 800 }}>4 étapes</span>
+        </h2>
+      </div>
+
+      {/* ── Desktop Timeline (4 Equal Columns, Gap 24px) ── */}
+      <div className="hidden md:block relative z-10">
+        {/* Continuous 1px Track behind the circles from center of circle 1 to center of circle 4 */}
+        <div
+          ref={trackRef}
+          aria-hidden="true"
+          className="absolute h-[1px] pointer-events-none z-0"
+          style={{
+            top: 24, // vertical center of 48px circle
+            left: "calc((100% - 72px) / 8)",
+            right: "calc((100% - 72px) / 8)",
+          }}
+        >
+          {/* Base gradient track */}
           <div
-            data-pop="badge"
+            className="w-full h-full"
             style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "4px 12px",
-              borderRadius: 999,
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              background: "rgba(11, 117, 132,0.08)",
-              color: "#0B7584",
-              marginBottom: 12,
+              background:
+                "linear-gradient(90deg, rgba(11,117,132,0.18), rgba(11,117,132,0.35), rgba(11,117,132,0.18))",
             }}
-          >
-            Processus Simple
-          </div>
-          <h2
+          />
+
+          {/* Accent progress line (1.5px, scaleX 0 to 1) */}
+          <div
+            className="absolute top-1/2 left-0 w-full h-[1.5px] -translate-y-1/2 origin-left pointer-events-none"
             style={{
-              fontSize: "clamp(1.5rem,3vw,2.3rem)",
-              color: "#0F172A",
-              margin: 0,
-              lineHeight: 1.15,
-              fontFamily: SF,
+              backgroundColor: "#0B7584",
+              transform: isRevealed ? "scaleX(1)" : "scaleX(0)",
+              transition: "transform 1.2s cubic-bezier(0.65, 0, 0.35, 1)",
             }}
-          >
-            <span style={{ fontWeight: 300 }}>Comment louer en </span>
-            <span style={{ fontWeight: 800 }}>4 étapes</span>
-          </h2>
+          />
+
+          {/* Small travelling dot: 6px, accent, halo shadow, rides leading edge, fades out at end */}
+          <div
+            className="absolute top-1/2 left-0 w-1.5 h-1.5 -mt-[3px] -ml-[3px] rounded-full pointer-events-none"
+            style={{
+              backgroundColor: "#0B7584",
+              boxShadow: "0 0 0 5px rgba(11, 117, 132, 0.14)",
+              transform: isRevealed ? `translateX(${trackWidth}px)` : "translateX(0)",
+              opacity: isRevealed ? (activeStep >= 4 ? 0 : 1) : 1,
+              transition: "transform 1.2s cubic-bezier(0.65, 0, 0.35, 1), opacity 300ms ease 1.15s",
+            }}
+          />
         </div>
 
-        {/* ── 1. Desktop Timeline (Unchanged) ── */}
-        <div
-          className="hidden sm:flex hiw-timeline-row"
-          style={{
-            flexDirection: "row",
-            alignItems: "flex-start",
-            gap: 0,
-            position: "relative",
-          }}
-        >
-          {STEPS.map((step, i) => (
-            <div
-              key={step.num}
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "flex-start",
-                flex: 1,
-                minWidth: 0,
-              }}
-            >
-              {/* Step column */}
+        {/* 4 Equal Columns Grid */}
+        <div className="grid grid-cols-4 gap-6 text-center">
+          {STEPS.map((step, i) => {
+            const isStepActive = activeStep >= i + 1;
+
+            return (
               <div
-                className="hiw-step-wrapper"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  flex: 1,
-                  minWidth: 0,
-                }}
+                key={step.num}
+                className="group flex flex-col items-center relative z-10"
               >
-                {/* Circle */}
+                {/* 48px Circle Node (Accent border, white bg, halo on active/hover) */}
                 <div
-                  className="hiw-step-circle"
+                  className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 mx-auto relative z-10 transition-all duration-400 group-hover:shadow-[0_0_0_9px_rgba(11,117,132,0.12)] cursor-default select-none"
                   style={{
-                    transitionDelay: `${i * 150}ms`,
-                    width: 48,
-                    height: 48,
-                    borderRadius: "50%",
-                    background: "#FFFFFF",
-                    border: "2px solid #0B7584",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                    zIndex: 1,
-                    position: "relative",
+                    border: "1.5px solid #0B7584",
+                    backgroundColor: isStepActive ? "rgba(11, 117, 132, 0.10)" : "#FFFFFF",
+                    boxShadow: isStepActive ? "0 0 0 6px rgba(11, 117, 132, 0.08)" : "none",
                   }}
                 >
                   <span
                     style={{
-                      fontWeight: 800,
-                      fontSize: 15,
-                      color: "#0B7584",
                       fontFamily: "ui-monospace, 'SF Mono', monospace",
+                      fontSize: 14,
+                      fontWeight: 700,
+                      color: "#0B7584",
+                      letterSpacing: "0.06em",
                       lineHeight: 1,
                     }}
                   >
@@ -284,171 +240,146 @@ export function HowItWorksSection() {
                   </span>
                 </div>
 
-                {/* Text below circle */}
+                {/* Step title & description */}
                 <div
-                  className="hiw-step-text"
                   style={{
-                    transitionDelay: `${i * 150 + 100}ms`,
-                    textAlign: "center",
-                    marginTop: 14,
-                    padding: "0 8px",
+                    opacity: isRevealed ? 1 : 0,
+                    transform: isRevealed ? "translateY(0)" : "translateY(16px)",
+                    transition: `opacity 700ms cubic-bezier(0.22, 1, 0.36, 1) ${
+                      300 + i * 80
+                    }ms, transform 700ms cubic-bezier(0.22, 1, 0.36, 1) ${300 + i * 80}ms`,
                   }}
                 >
-                  <div
+                  <h3
                     style={{
+                      marginTop: 16,
+                      fontSize: 16,
+                      lineHeight: 1.3,
                       fontWeight: 600,
-                      fontSize: 14,
                       color: "#0F172A",
-                      lineHeight: 1.35,
-                      marginBottom: 6,
                       fontFamily: SF,
                     }}
+                    className="m-0 mt-4"
                   >
                     {step.title}
-                  </div>
-                  <div
+                  </h3>
+                  <p
                     style={{
-                      fontSize: 12.5,
-                      color: "#64748B",
+                      marginTop: 6,
+                      fontSize: 14,
                       lineHeight: 1.6,
+                      color: "rgba(15, 23, 42, 0.68)",
+                      maxWidth: "30ch",
                       fontFamily: SF,
-                      fontWeight: 400,
                     }}
+                    className="m-0 mt-1.5 mx-auto line-clamp-3"
                   >
                     {step.desc}
-                  </div>
+                  </p>
                 </div>
               </div>
+            );
+          })}
+        </div>
+      </div>
 
-              {/* Horizontal connector between steps */}
-              {i < STEPS.length - 1 && (
+      {/* ── Mobile Vertical Timeline (under 768px) ── */}
+      <div className="md:hidden relative z-10">
+        {/* Continuous vertical track at x = 20px */}
+        <div
+          aria-hidden="true"
+          className="absolute left-[20px] top-[20px] bottom-[20px] w-[1.5px] -translate-x-1/2 pointer-events-none z-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(11,117,132,0.18), rgba(11,117,132,0.35), rgba(11,117,132,0.18))",
+          }}
+        >
+          <div
+            className="w-full h-full origin-top pointer-events-none"
+            style={{
+              backgroundColor: "#0B7584",
+              transform: isRevealed ? "scaleY(1)" : "scaleY(0)",
+              transition: "transform 1.2s cubic-bezier(0.65, 0, 0.35, 1)",
+            }}
+          />
+        </div>
+
+        {/* Vertical Steps */}
+        <div className="space-y-7">
+          {STEPS.map((step, i) => {
+            const isStepActive = activeStep >= i + 1;
+
+            return (
+              <div
+                key={step.num}
+                className="flex items-start gap-4 relative z-10"
+                style={{
+                  opacity: isRevealed ? 1 : 0,
+                  transform: isRevealed ? "translateY(0)" : "translateY(12px)",
+                  transition: `opacity 600ms cubic-bezier(0.22, 1, 0.36, 1) ${
+                    250 + i * 80
+                  }ms, transform 600ms cubic-bezier(0.22, 1, 0.36, 1) ${250 + i * 80}ms`,
+                }}
+              >
+                {/* 40px Circle Node */}
                 <div
-                  className="hiw-connector-horiz"
+                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 relative z-10 transition-all duration-300"
                   style={{
-                    width: 40,
-                    flexShrink: 0,
-                    height: 48,
-                    display: "flex",
-                    alignItems: "center",
-                    position: "relative",
+                    border: "1.5px solid #0B7584",
+                    backgroundColor: isStepActive ? "rgba(11, 117, 132, 0.10)" : "#FFFFFF",
+                    boxShadow: isStepActive ? "0 0 0 5px rgba(11, 117, 132, 0.08)" : "none",
                   }}
                 >
-                  <div
+                  <span
                     style={{
-                      width: "100%",
-                      height: 2,
-                      background: "rgba(194,120,58,0.3)",
-                      position: "relative",
-                      overflow: "hidden",
+                      fontFamily: "ui-monospace, 'SF Mono', monospace",
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: "#0B7584",
+                      letterSpacing: "0.06em",
+                      lineHeight: 1,
                     }}
                   >
-                    <div
-                      className="hiw-connector-line"
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        transitionDelay: `${i * 200 + 200}ms`,
-                      }}
-                    />
-                  </div>
+                    {step.num}
+                  </span>
                 </div>
-              )}
-            </div>
-          ))}
+
+                {/* Left-aligned text */}
+                <div className="flex-1 min-w-0 pt-1">
+                  <h3
+                    className="text-[15px] font-semibold text-[#0F172A] leading-[1.3] m-0"
+                    style={{ fontFamily: SF }}
+                  >
+                    {step.title}
+                  </h3>
+                  <p
+                    className="text-[13.5px] text-[#0F172A]/[0.68] leading-[1.55] m-0 mt-1"
+                    style={{ fontFamily: SF }}
+                  >
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* ── 2. Mobile 2x2 Snake Timeline ── */}
-        <div className="sm:hidden relative">
-          {/* Row 1: Step 1 (top-left) -> Line 1->2 -> Step 2 (top-right) */}
-          <div className="grid grid-cols-2 gap-2.5 relative">
-            {/* Step 1 */}
-            <div className="hiw-m-card hiw-m-card-1 p-2.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[96px]">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-6 h-6 rounded-full bg-[#0B7584]/10 border-2 border-[#0B7584] flex items-center justify-center shrink-0">
-                  <span className="text-[10px] font-black text-[#0B7584] font-mono leading-none">01</span>
-                </div>
-                <h4 className="text-[11px] font-bold text-slate-900 leading-tight m-0 line-clamp-2">
-                  {STEPS[0].title}
-                </h4>
-              </div>
-              <p className="text-[9.5px] text-slate-500 leading-snug m-0">
-                {STEPS[0].shortDesc}
-              </p>
-            </div>
-
-            {/* Connecting line 1 -> 2 */}
-            <div className="absolute left-[45%] right-[45%] top-5 h-0.5 bg-[#0B7584]/25 z-10 pointer-events-none overflow-hidden">
-              <div className="hiw-m-line-fill hiw-m-l1" />
-            </div>
-
-            {/* Step 2 */}
-            <div className="hiw-m-card hiw-m-card-2 p-2.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[96px]">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-6 h-6 rounded-full bg-[#0B7584]/10 border-2 border-[#0B7584] flex items-center justify-center shrink-0">
-                  <span className="text-[10px] font-black text-[#0B7584] font-mono leading-none">02</span>
-                </div>
-                <h4 className="text-[11px] font-bold text-slate-900 leading-tight m-0 line-clamp-2">
-                  {STEPS[1].title}
-                </h4>
-              </div>
-              <p className="text-[9.5px] text-slate-500 leading-snug m-0">
-                {STEPS[1].shortDesc}
-              </p>
-            </div>
-          </div>
-
-          {/* Vertical Snake Connector (2 -> 3) on the right side */}
-          <div className="flex justify-end pr-[22%] my-1.5 h-5">
-            <div className="w-0.5 h-full bg-[#0B7584]/25 relative overflow-hidden">
-              <div className="hiw-m-line-fill hiw-m-l2" />
-            </div>
-          </div>
-
-          {/* Row 2: Step 4 (bottom-left) <- Line 3->4 <- Step 3 (bottom-right) */}
-          <div className="grid grid-cols-2 gap-2.5 relative">
-            {/* Step 4 (left) */}
-            <div className="hiw-m-card hiw-m-card-4 p-2.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[96px]">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-6 h-6 rounded-full bg-[#0B7584]/10 border-2 border-[#0B7584] flex items-center justify-center shrink-0">
-                  <span className="text-[10px] font-black text-[#0B7584] font-mono leading-none">04</span>
-                </div>
-                <h4 className="text-[11px] font-bold text-slate-900 leading-tight m-0 line-clamp-2">
-                  {STEPS[3].title}
-                </h4>
-              </div>
-              <p className="text-[9.5px] text-slate-500 leading-snug m-0">
-                {STEPS[3].shortDesc}
-              </p>
-            </div>
-
-            {/* Connecting line 3 -> 4 (draws from right to left) */}
-            <div className="absolute left-[45%] right-[45%] top-5 h-0.5 bg-[#0B7584]/25 z-10 pointer-events-none overflow-hidden">
-              <div
-                className="hiw-m-line-fill hiw-m-l3"
-                style={{
-                  left: "auto",
-                  right: 0,
-                }}
-              />
-            </div>
-
-            {/* Step 3 (right) */}
-            <div className="hiw-m-card hiw-m-card-3 p-2.5 rounded-xl bg-white border border-slate-200 shadow-2xs flex flex-col justify-between min-h-[96px]">
-              <div className="flex items-center gap-2 mb-1">
-                <div className="w-6 h-6 rounded-full bg-[#0B7584]/10 border-2 border-[#0B7584] flex items-center justify-center shrink-0">
-                  <span className="text-[10px] font-black text-[#0B7584] font-mono leading-none">03</span>
-                </div>
-                <h4 className="text-[11px] font-bold text-slate-900 leading-tight m-0 line-clamp-2">
-                  {STEPS[2].title}
-                </h4>
-              </div>
-              <p className="text-[9.5px] text-slate-500 leading-snug m-0">
-                {STEPS[2].shortDesc}
-              </p>
-            </div>
-          </div>
+        {/* Mobile Corner link moved below the last step, centered, margin-top 24px */}
+        <div className="mt-6 text-center">
+          <Link
+            href="#booking-box"
+            className="inline-flex items-center gap-1.5 text-[14px] font-semibold text-[#0B7584] group/corner no-underline"
+          >
+            <span className="relative">
+              Faire ma demande
+              <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-[#0B7584] scale-x-0 group-hover/corner:scale-x-100 transition-transform duration-250 origin-left" />
+            </span>
+            <span className="group-hover/corner:translate-x-1 transition-transform duration-200">
+              →
+            </span>
+          </Link>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
