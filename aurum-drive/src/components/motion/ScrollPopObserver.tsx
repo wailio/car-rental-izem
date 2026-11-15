@@ -23,8 +23,7 @@ export function ScrollPopObserver() {
       return
     }
 
-    // Trigger only when element is well inside viewport (120px from bottom edge)
-    // This prevents firing before the element is actually visible
+    // Trigger smoothly as elements approach the viewport bottom (natural eye-comfy reveal)
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -37,8 +36,8 @@ export function ScrollPopObserver() {
         })
       },
       {
-        threshold: 0.12,
-        rootMargin: '0px 0px -120px 0px', // Only trigger when 120px inside viewport
+        threshold: 0.05,
+        rootMargin: '0px 0px -40px 0px',
       }
     )
 
@@ -46,7 +45,7 @@ export function ScrollPopObserver() {
       document.querySelectorAll('[data-pop]:not(.pop-in)').forEach((el) => {
         // Elements already above fold should NOT animate (they're visible on load)
         const rect = el.getBoundingClientRect()
-        const alreadyVisible = rect.top < window.innerHeight - 120 && rect.bottom > 0
+        const alreadyVisible = rect.top < window.innerHeight - 40 && rect.bottom > 0
         if (alreadyVisible) {
           el.classList.add('pop-in')
         } else {

@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Menu } from "lucide-react";
+import { ArrowRight, Menu, MapPin, Calendar as CalendarIcon, ChevronDown } from "lucide-react";
 import { ROUTES } from "@/lib/config";
 import { MobileMenuDrawer } from "@/components/navigation/MobileMenuDrawer";
 import { IzemBrandLockup } from "@/components/common/IzemBrandLockup";
+import { IosLocationDropdown } from "./IosLocationDropdown";
+import { IosBookingCalendar } from "./IosBookingCalendar";
 
 const LOCATIONS = [
   "Aéroport d'Alger (ALG)",
@@ -20,14 +22,38 @@ export function HeroSection() {
   const [phone, setPhone] = useState("");
   const [location, setLocation] = useState(LOCATIONS[0]);
   const [date, setDate] = useState("");
+  const [time, setTime] = useState("10:00");
+  const [isLocationOpen, setIsLocationOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileStep, setMobileStep] = useState<1 | 2 | 3>(1);
 
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const phoneInputRef = useRef<HTMLInputElement>(null);
+
+  const formatDisplayDate = (dStr: string, tStr: string) => {
+    if (!dStr) return "Choisir date & heure";
+    try {
+      const parts = dStr.split('-');
+      if (parts.length === 3) {
+        const y = Number(parts[0]);
+        const m = Number(parts[1]);
+        const d = Number(parts[2]);
+        const months = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+        return `${d} ${months[m - 1]} ${y} · ${tStr || '10:00'}`;
+      }
+      return dStr;
+    } catch {
+      return dStr;
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const formattedPickup = date ? `${date}${time ? ` ${time}` : ''}` : '';
     const params = new URLSearchParams({
       location,
-      ...(date ? { pickup_at: date } : {}),
+      ...(formattedPickup ? { pickup_at: formattedPickup } : {}),
       ...(fullName ? { name: fullName } : {}),
       ...(phone ? { phone } : {}),
     });
@@ -234,62 +260,115 @@ export function HeroSection() {
                 </h3>
               </div>
 
-              {/* Col 1: Full Name / Nom complet */}
-              <div className="rentgo-booking-col">
-                <label className="rentgo-booking-label">
+              {/* Col 1: Full Name / Nom complet (Entire slot clickable) */}
+              <div
+                onClick={() => nameInputRef.current?.focus()}
+                className="rentgo-booking-col group cursor-pointer hover:bg-white/[0.05] transition-all duration-200 rounded-xl py-1.5 px-3.5"
+                title="Cliquer pour renseigner votre nom"
+              >
+                <label className="rentgo-booking-label cursor-pointer select-none">
                   Nom complet
                 </label>
                 <input
+                  ref={nameInputRef}
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Votre nom"
-                  className="rentgo-booking-input"
+                  className="rentgo-booking-input w-full focus:outline-none placeholder:text-white/40"
                 />
               </div>
 
-              {/* Col 2: Mobile Number / Téléphone mobile */}
-              <div className="rentgo-booking-col">
-                <label className="rentgo-booking-label">
+              {/* Col 2: Mobile Number / Téléphone mobile (Entire slot clickable) */}
+              <div
+                onClick={() => phoneInputRef.current?.focus()}
+                className="rentgo-booking-col group cursor-pointer hover:bg-white/[0.05] transition-all duration-200 rounded-xl py-1.5 px-3.5"
+                title="Cliquer pour renseigner votre numéro de téléphone"
+              >
+                <label className="rentgo-booking-label cursor-pointer select-none">
                   Téléphone mobile
                 </label>
                 <input
+                  ref={phoneInputRef}
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="0550 12 34 56"
-                  className="rentgo-booking-input"
+                  className="rentgo-booking-input w-full focus:outline-none placeholder:text-white/40"
                 />
               </div>
 
-              {/* Col 3: Pickup Location / Lieu de retrait */}
-              <div className="rentgo-booking-col">
-                <label className="rentgo-booking-label">
-                  Lieu de retrait
-                </label>
-                <select
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="rentgo-booking-input cursor-pointer [&>option]:text-white [&>option]:bg-[#16181F]"
-                >
-                  {LOCATIONS.map((loc) => (
-                    <option key={loc} value={loc}>
-                      {loc}
-                    </option>
-                  ))}
-                </select>
+              {/* Col 3: Pickup Location / Lieu de retrait (iOS Glassy Options Dropdown) */}
+              <div
+                onClick={() => {
+                  setIsLocationOpen((prev) => !prev);
+                  setIsCalendarOpen(false);
+                }}
+                className="rentgo-booking-col group cursor-pointer hover:bg-white/[0.05] transition-all duration-200 rounded-xl py-1.5 px-3.5 relative"
+                title="Cliquer pour choisir le lieu de retrait"
+              >
+                <div className="flex items-center justify-between">
+                  <label className="rentgo-booking-label cursor-pointer select-none">
+                    Lieu de retrait
+                  </label>
+                  <ChevronDown
+                    size={13}
+                    className={`text-white/50 transition-transform duration-300 ${
+                      isLocationOpen ? "rotate-180 text-[#0B7584]" : "group-hover:text-white/80"
+                    }`}
+                  />
+                </div>
+                <div className="rentgo-booking-input truncate font-medium text-white flex items-center gap-1.5 select-none pt-0.5">
+                  <MapPin size={13} className="text-[#0B7584] shrink-0" />
+                  <span className="truncate">{location}</span>
+                </div>
+
+                {/* iOS Glassy Slide Dropdown */}
+                <IosLocationDropdown
+                  locations={LOCATIONS}
+                  selectedLocation={location}
+                  onSelect={(loc) => setLocation(loc)}
+                  isOpen={isLocationOpen}
+                  onClose={() => setIsLocationOpen(false)}
+                />
               </div>
 
-              {/* Col 4: Pickup Date / Date de retrait */}
-              <div className="rentgo-booking-col">
-                <label className="rentgo-booking-label">
-                  Date de retrait
-                </label>
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="rentgo-booking-input cursor-pointer [color-scheme:dark]"
+              {/* Col 4: Pickup Date / Date de retrait (iOS Glassy Calendar & Time Popout) */}
+              <div
+                onClick={() => {
+                  setIsCalendarOpen((prev) => !prev);
+                  setIsLocationOpen(false);
+                }}
+                className="rentgo-booking-col group cursor-pointer hover:bg-white/[0.05] transition-all duration-200 rounded-xl py-1.5 px-3.5 relative"
+                title="Cliquer pour ouvrir le calendrier et choisir l'heure"
+              >
+                <div className="flex items-center justify-between">
+                  <label className="rentgo-booking-label cursor-pointer select-none">
+                    Date de retrait
+                  </label>
+                  <CalendarIcon
+                    size={13}
+                    className={`text-white/50 transition-colors ${
+                      isCalendarOpen ? "text-[#0B7584]" : "group-hover:text-white/80"
+                    }`}
+                  />
+                </div>
+                <div className="rentgo-booking-input truncate font-medium flex items-center gap-1.5 select-none pt-0.5">
+                  <span className={date ? "text-white" : "text-white/40"}>
+                    {formatDisplayDate(date, time)}
+                  </span>
+                </div>
+
+                {/* iOS Glassy Calendar + Time Picker Popover */}
+                <IosBookingCalendar
+                  selectedDate={date}
+                  selectedTime={time}
+                  onChange={(d, t) => {
+                    setDate(d);
+                    setTime(t);
+                  }}
+                  isOpen={isCalendarOpen}
+                  onClose={() => setIsCalendarOpen(false)}
                 />
               </div>
 
